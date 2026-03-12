@@ -1,0 +1,1907 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nuzlocke Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Exo+2:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d0f14;
+      --bg2: #13161e;
+      --bg3: #1a1e28;
+      --card: #1e2332;
+      --card2: #252b3b;
+      --border: #2e3650;
+      --accent: #e63946;
+      --accent2: #ff6b6b;
+      --gold: #ffd166;
+      --green: #06d6a0;
+      --blue: #118ab2;
+      --purple: #9b5de5;
+      --text: #e8eaf0;
+      --text2: #8892aa;
+      --text3: #5a6278;
+      --dead: #7f1d1d;
+      --dead-bg: #1f0a0a;
+      --shadow: 0 8px 32px rgba(0,0,0,0.5);
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Exo 2', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Background grid */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(230,57,70,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(230,57,70,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app-wrapper { position: relative; z-index: 1; }
+
+    /* ===== HEADER ===== */
+    header {
+      background: linear-gradient(135deg, #0d0f14 0%, #1a1020 50%, #0d0f14 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: radial-gradient(circle at 35% 35%, #fff 30%, #e63946 30%, #e63946 50%, #111 50%);
+      border-radius: 50%;
+      border: 3px solid #222;
+      box-shadow: 0 0 0 2px var(--accent), 0 0 20px rgba(230,57,70,0.4);
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px;
+      line-height: 1.6;
+      letter-spacing: 1px;
+    }
+
+    .logo-text span {
+      display: block;
+      color: var(--accent);
+      font-size: 7px;
+      color: var(--text2);
+      margin-top: 3px;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .ctrl-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-family: 'Exo 2', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn:hover { background: var(--card2); border-color: var(--accent); color: var(--accent); }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+
+    .btn-sm { padding: 5px 10px; font-size: 11px; }
+    .btn-icon { padding: 6px 8px; }
+
+    /* Player count selector */
+    .player-count-select {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .count-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .count-btn:hover { border-color: var(--accent); }
+    .count-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(230,57,70,0.4);
+    }
+
+    /* ===== GAME SELECTOR ===== */
+    .game-selector {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    select.game-select {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Exo 2', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      outline: none;
+    }
+    select.game-select:focus { border-color: var(--accent); }
+
+    /* ===== MAIN CONTENT ===== */
+    .main-content {
+      padding: 24px 32px 48px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    /* ===== RUN TITLE ===== */
+    .run-title-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .run-name-input {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid var(--border);
+      color: var(--text);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 14px;
+      padding: 8px 4px;
+      outline: none;
+      transition: border-color 0.2s;
+      min-width: 200px;
+    }
+    .run-name-input:focus { border-bottom-color: var(--accent); }
+    .run-name-input::placeholder { color: var(--text3); }
+
+    /* ===== GYMS SECTION ===== */
+    .gyms-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+
+    .gyms-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px;
+      color: var(--text2);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .gyms-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .gym-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      min-width: 64px;
+    }
+
+    .gym-badge:hover { border-color: var(--border); background: var(--card2); }
+
+    .gym-badge.completed .badge-icon { filter: none; }
+    .gym-badge:not(.completed) .badge-icon { filter: grayscale(100%) brightness(0.4); }
+
+    .badge-icon {
+      font-size: 28px;
+      transition: transform 0.2s;
+      line-height: 1;
+    }
+    .gym-badge.completed .badge-icon { transform: scale(1.1); }
+
+    .badge-name {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text2);
+      text-align: center;
+      line-height: 1.3;
+    }
+    .gym-badge.completed .badge-name { color: var(--gold); }
+
+    .badge-level {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 7px;
+      color: var(--text3);
+    }
+
+    /* ===== PLAYERS GRID ===== */
+    .players-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    /* ===== PLAYER CARD ===== */
+    .player-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .player-card:hover { border-color: var(--accent); }
+
+    .player-header {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, var(--card2), var(--card));
+      border-bottom: 1px solid var(--border);
+    }
+
+    .player-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--bg3);
+      border: 2px solid var(--border);
+      object-fit: cover;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .player-avatar:hover { border-color: var(--accent); }
+    .player-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .player-info { flex: 1; min-width: 0; }
+
+    .player-name-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid transparent;
+      color: var(--text);
+      font-family: 'Exo 2', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 2px 0;
+      outline: none;
+      width: 100%;
+      transition: border-color 0.2s;
+    }
+    .player-name-input:focus { border-bottom-color: var(--accent); }
+    .player-name-input::placeholder { color: var(--text3); }
+
+    .player-stats {
+      display: flex;
+      gap: 14px;
+      margin-top: 4px;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text2);
+    }
+    .stat-item .stat-val {
+      color: var(--text);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+    }
+    .stat-item.deaths .stat-val { color: var(--accent); }
+
+    .player-actions { display: flex; gap: 4px; }
+
+    /* ===== TEAM GRID ===== */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 12px;
+    }
+
+    /* ===== POKEMON SLOT ===== */
+    .poke-slot {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 8px 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      min-height: 110px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .poke-slot:hover:not(.dead) {
+      border-color: var(--accent);
+      background: var(--card2);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(230,57,70,0.15);
+    }
+
+    .poke-slot.empty {
+      border-style: dashed;
+      border-color: var(--text3);
+      justify-content: center;
+    }
+
+    .poke-slot.empty:hover {
+      border-color: var(--accent);
+      border-style: dashed;
+    }
+
+    .poke-slot.dead {
+      background: var(--dead-bg);
+      border-color: var(--dead);
+      cursor: pointer;
+    }
+
+    .poke-slot.dead::after {
+      content: '💀';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      background: rgba(31, 10, 10, 0.65);
+      border-radius: 9px;
+      pointer-events: none;
+    }
+
+    .slot-add-icon {
+      font-size: 24px;
+      color: var(--text3);
+      transition: color 0.2s;
+      line-height: 1;
+    }
+    .poke-slot.empty:hover .slot-add-icon { color: var(--accent); }
+
+    .slot-add-text {
+      font-size: 9px;
+      color: var(--text3);
+      margin-top: 4px;
+    }
+
+    .poke-sprite {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+      image-rendering: pixelated;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    }
+
+    .poke-nickname {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text);
+      margin-top: 2px;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .poke-species {
+      font-size: 8px;
+      color: var(--text2);
+      margin-top: 1px;
+    }
+
+    .poke-types {
+      display: flex;
+      gap: 3px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .type-badge {
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 7px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .poke-location {
+      font-size: 7px;
+      color: var(--text3);
+      margin-top: 3px;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ===== DEAD BOX ===== */
+    .dead-box {
+      padding: 8px 12px 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .dead-box-title {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .dead-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .dead-poke-mini {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--dead-bg);
+      border: 1px solid var(--dead);
+      border-radius: 6px;
+      padding: 3px 6px;
+      font-size: 9px;
+    }
+
+    .dead-poke-mini img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      image-rendering: pixelated;
+      filter: grayscale(100%);
+    }
+
+    /* ===== CONTEXT MENU ===== */
+    .context-menu {
+      position: fixed;
+      background: var(--card);
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.7), 0 0 0 1px rgba(230,57,70,0.2);
+      z-index: 9999;
+      min-width: 180px;
+      overflow: hidden;
+      animation: menuIn 0.15s ease;
+    }
+
+    @keyframes menuIn {
+      from { opacity: 0; transform: scale(0.92) translateY(-6px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .context-menu-header {
+      padding: 10px 14px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .context-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+      border: none;
+      background: none;
+      color: var(--text);
+      width: 100%;
+      text-align: left;
+    }
+    .context-item:hover { background: var(--card2); }
+    .context-item.danger:hover { background: var(--dead-bg); color: var(--accent); }
+    .context-item .ci-icon { font-size: 16px; width: 20px; text-align: center; }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: var(--shadow);
+      animation: slideUp 0.2s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-field {
+      margin-bottom: 14px;
+    }
+
+    .modal-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .modal-input {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Exo 2', sans-serif;
+      font-size: 14px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .modal-input:focus { border-color: var(--accent); }
+    .modal-input::placeholder { color: var(--text3); }
+
+    .modal-preview {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 16px;
+      min-height: 80px;
+    }
+
+    .preview-sprite {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+
+    .preview-info { flex: 1; }
+
+    .preview-name {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .preview-types {
+      display: flex;
+      gap: 4px;
+    }
+
+    .search-spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin-left: 8px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 18px;
+    }
+
+    /* ===== TYPE COLORS ===== */
+    .t-normal { background: #a8a878; color: #111; }
+    .t-fire { background: #f08030; color: #111; }
+    .t-water { background: #6890f0; color: #111; }
+    .t-electric { background: #f8d030; color: #111; }
+    .t-grass { background: #78c850; color: #111; }
+    .t-ice { background: #98d8d8; color: #111; }
+    .t-fighting { background: #c03028; color: #fff; }
+    .t-poison { background: #a040a0; color: #fff; }
+    .t-ground { background: #e0c068; color: #111; }
+    .t-flying { background: #a890f0; color: #111; }
+    .t-psychic { background: #f85888; color: #111; }
+    .t-bug { background: #a8b820; color: #111; }
+    .t-rock { background: #b8a038; color: #111; }
+    .t-ghost { background: #705898; color: #fff; }
+    .t-dragon { background: #7038f8; color: #fff; }
+    .t-dark { background: #705848; color: #fff; }
+    .t-steel { background: #b8b8d0; color: #111; }
+    .t-fairy { background: #ee99ac; color: #111; }
+
+    /* ===== SEARCH RESULTS ===== */
+    .search-results {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      max-height: 180px;
+      overflow-y: auto;
+      margin-top: 6px;
+    }
+
+    .search-result-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: background 0.15s;
+      border-bottom: 1px solid var(--border);
+    }
+    .search-result-item:last-child { border-bottom: none; }
+    .search-result-item:hover { background: var(--card2); }
+
+    .search-result-item img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+
+    .search-result-item .sr-name { font-size: 13px; font-weight: 600; }
+    .search-result-item .sr-id { font-size: 11px; color: var(--text2); }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+    /* ===== HIDDEN ===== */
+    .hidden { display: none !important; }
+
+    /* ===== TOAST ===== */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--green);
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s;
+      box-shadow: var(--shadow);
+    }
+    .toast.error { border-left-color: var(--accent); }
+
+    @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 640px) {
+      .main-content { padding: 16px; }
+      header { padding: 12px 16px; }
+      .players-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-logo">
+      <div class="logo-icon"></div>
+      <div class="logo-text">
+        NUZLOCKE TRACKER
+        <span>COMMUNITY EDITION</span>
+      </div>
+    </div>
+    <div class="header-controls">
+      <span class="ctrl-label">Spieler:</span>
+      <div class="player-count-select" id="playerCountSelect"></div>
+      <div class="game-selector">
+        <span class="ctrl-label">Spiel:</span>
+        <select class="game-select" id="gameSelect"></select>
+      </div>
+      <button class="btn btn-sm" onclick="resetAll()">🔄 Reset</button>
+    </div>
+  </header>
+
+  <div class="main-content">
+
+    <!-- RUN TITLE -->
+    <div class="run-title-bar">
+      <input class="run-name-input" id="runName" placeholder="Run Name eingeben..." maxlength="60" />
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span style="font-size:12px;color:var(--text2);" id="totalDeathsLabel">Gesamt Tode: <b style="color:var(--accent)">0</b></span>
+        <button class="btn btn-sm btn-primary" onclick="saveData()">💾 Speichern</button>
+      </div>
+    </div>
+
+    <!-- GYMS -->
+    <div class="gyms-section">
+      <div class="gyms-title">🏅 Arena-Abzeichen</div>
+      <div class="gyms-grid" id="gymsGrid"></div>
+    </div>
+
+    <!-- PLAYERS -->
+    <div class="players-grid" id="playersGrid"></div>
+
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- CONTEXT MENU -->
+<div class="context-menu hidden" id="contextMenu"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay hidden" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">🎮 Pokémon hinzufügen</div>
+
+    <div class="modal-preview" id="modalPreview">
+      <div style="color:var(--text3);font-size:13px;text-align:center;width:100%;">Suche ein Pokémon...</div>
+    </div>
+
+    <div class="modal-field">
+      <label class="modal-label">Pokémon Name / #ID</label>
+      <input class="modal-input" id="pokeSearch" placeholder="z.B. Glumanda, pikachu, 25..." />
+      <div id="searchResults" class="search-results hidden"></div>
+    </div>
+
+    <div class="modal-field">
+      <label class="modal-label">Spitzname (optional)</label>
+      <input class="modal-input" id="pokeNickname" placeholder='z.B. "Feuerball"' />
+    </div>
+
+    <div class="modal-field">
+      <label class="modal-label">Fundort</label>
+      <input class="modal-input" id="pokeLocation" placeholder="z.B. Route 1, Starter..." />
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">Abbrechen</button>
+      <button class="btn btn-primary" id="modalConfirmBtn" onclick="confirmAddPokemon()">✅ Hinzufügen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  GERMAN → ENGLISH POKEMON NAME LOOKUP (Gen 1-9)
+// ============================================================
+const DE_TO_EN = {
+  // Gen 1
+  bisasam:'bulbasaur',bisaknosp:'ivysaur',bisaflor:'venusaur',
+  glumanda:'charmander',glutexo:'charmeleon',glurak:'charizard',
+  schiggy:'squirtle',schillok:'wartortle',turtok:'blastoise',
+  raupi:'caterpie',safcon:'metapod',smettbo:'butterfree',
+  hornliu:'weedle',kokuna:'kakuna',bibor:'beedrill',
+  taubsi:'pidgey',tauboga:'pidgeotto',tauboss:'pidgeot',
+  rattfratz:'rattata',rattikarl:'raticate',
+  habitak:'spearow',ibitak:'fearow',
+  rettan:'ekans',arbok:'arbok',
+  pikachu:'pikachu',raichu:'raichu',
+  sandan:'sandshrew',sandamer:'sandslash',
+  nidorina:'nidorina',nidoqueen:'nidoqueen',
+  nidorino:'nidorino',nidoking:'nidoking',
+  piepi:'clefairy',pixi:'clefable',
+  vulpix:'vulpix',vulnona:'ninetales',
+  pummeluff:'jigglypuff',knuddeluff:'wigglytuff',
+  zubat:'zubat',golbat:'golbat',
+  myrapla:'oddish',duflor:'gloom',blubella:'vileplume',
+  paras:'paras',parasek:'parasect',
+  bluzuk:'venonat',omot:'venomoth',
+  digda:'diglett',digdri:'dugtrio',
+  mauzi:'meowth',snobilikat:'persian',
+  enton:'psyduck',entoron:'golduck',
+  menki:'mankey',rasaff:'primeape',
+  fukano:'growlithe',arkani:'arcanine',
+  quapsel:'poliwag',quaputzi:'poliwhirl',quappo:'poliwrath',
+  abra:'abra',kadabra:'kadabra',simsala:'alakazam',
+  machollo:'machop',maschock:'machoke',machomei:'machamp',
+  knofensa:'bellsprout',ultrigaria:'weepinbell',sarzenia:'victreebel',
+  tentacha:'tentacool',tentoxa:'tentacruel',
+  kleinstein:'geodude',georok:'graveler',geowaz:'golem',
+  ponita:'ponyta',gallopa:'rapidash',
+  flegmon:'slowpoke',lahmus:'slowbro',
+  magnetilo:'magnemite',magneton:'magneton',
+  porenta:"farfetch'd",dodu:'doduo',dodri:'dodrio',
+  jurob:'seel',jugong:'dewgong',
+  sleima:'grimer',sleimok:'muk',
+  muschas:'shellder',austos:'cloyster',
+  nebulak:'gastly',alpollo:'haunter',gengar:'gengar',
+  onix:'onix',traumato:'drowzee',hypno:'hypno',
+  krabby:'krabby',kingler:'kingler',
+  voltobal:'voltorb',lektrobal:'electrode',
+  owei:'exeggcute',kokowei:'exeggutor',
+  tragosso:'cubone',knogga:'marowak',
+  kicklee:'hitmonlee',nockchan:'hitmonchan',
+  schlurp:'lickitung',smogon:'koffing',smogmog:'weezing',
+  rihorn:'rhyhorn',rizeros:'rhydon',
+  chaneira:'chansey',tangela:'tangela',kangama:'kangaskhan',
+  seeper:'horsea',seemon:'seadra',
+  goldini:'goldeen',golking:'seaking',
+  sterndu:'staryu',starmie:'starmie',
+  pantimos:'mr-mime',sichlor:'scyther',rossana:'jynx',
+  elektek:'electabuzz',magmar:'magmar',pinsir:'pinsir',tauros:'tauros',
+  karpador:'magikarp',garados:'gyarados',lapras:'lapras',ditto:'ditto',
+  evoli:'eevee',aquana:'vaporeon',blitza:'jolteon',flamara:'flareon',
+  porygon:'porygon',amonitas:'omanyte',amoroso:'omastar',
+  kabuto:'kabuto',kabutops:'kabutops',aerodactyl:'aerodactyl',
+  relaxo:'snorlax',arktos:'articuno',zapdos:'zapdos',lavados:'moltres',
+  dratini:'dratini',dragonir:'dragonair',dragoran:'dragonite',
+  mewtu:'mewtwo',mew:'mew',
+  // Gen 2
+  endivie:'chikorita',lorblatt:'bayleef',meganie:'meganium',
+  feurigel:'cyndaquil',igelavar:'quilava',tornupto:'typhlosion',
+  karnimani:'totodile',tyracroc:'croconaw',impergator:'feraligatr',
+  wiesor:'sentret',wiesenior:'furret',
+  hoothoot:'hoothoot',noctuh:'noctowl',
+  ledyba:'ledyba',ledian:'ledian',spinarak:'spinarak',ariados:'ariados',
+  iksbat:'crobat',lampi:'chinchou',lanturn:'lanturn',
+  pichu:'pichu',pii:'cleffa',fluffeluff:'igglybuff',
+  togepi:'togepi',togetic:'togetic',natu:'natu',xatu:'xatu',
+  voltilamm:'mareep',waaty:'flaaffy',ampharos:'ampharos',
+  marill:'marill',azumarill:'azumarill',
+  mogelbaum:'sudowoodo',quapifrei:'politoed',
+  hoppspross:'hoppip',hubelupf:'skiploom',watthupf:'jumpluff',
+  aipom:'aipom',sonnkern:'sunkern',sonnflora:'sunflora',
+  yanma:'yanma',felino:'wooper',morlord:'quagsire',
+  psiana:'espeon',nachtara:'umbreon',kramurx:'murkrow',
+  laschoking:'slowking',traunfugil:'misdreavus',unown:'unown',
+  woingenau:'wobbuffet',girafarig:'girafarig',
+  keifel:'pineco',forstellka:'forretress',dummisel:'dunsparce',
+  glibunkel:'gligar',stahlos:'steelix',
+  snubbull:'snubbull',granbull:'granbull',
+  scherox:'scizor',pottrott:'shuckle',skaraborn:'heracross',
+  sneasel:'sneasel',teddiursa:'teddiursa',ursaring:'ursaring',
+  schneckmag:'slugma',magcargo:'magcargo',
+  quiekel:'swinub',keicreo:'piloswine',corasonn:'corsola',
+  remoraid:'remoraid',octillery:'octillery',delibird:'delibird',
+  mantax:'mantine',panzaeron:'skarmory',
+  hunduster:'houndour',hundemon:'houndoom',
+  seedraking:'kingdra',phanpy:'phanpy',donphan:'donphan',
+  porygon2:'porygon2',damhirplex:'stantler',malfeo:'smeargle',
+  rabauz:'tyrogue',kapoera:'hitmontop',kussmon:'smoochum',
+  elekid:'elekid',magby:'magby',miltank:'miltank',
+  heiteira:'blissey',raikou:'raikou',entei:'entei',suicune:'suicune',
+  larvitar:'larvitar',pupitar:'pupitar',despotar:'tyranitar',
+  lugia:'lugia','ho-oh':'ho-oh',celebi:'celebi',
+  // Gen 3
+  geckarbor:'treecko',reptain:'grovyle',gewaldro:'sceptile',
+  flemmli:'torchic',jungglut:'combusken',lohgock:'blaziken',
+  hydropi:'mudkip',moorabbel:'marshtomp',sumpex:'swampert',
+  poochiena:'poochyena',magnayen:'mightyena',
+  zigzachs:'zigzagoon',geradaks:'linoone',
+  waumpel:'wurmple',schaloko:'silcoon',papinella:'beautifly',pudox:'cascoon',morpheo:'dustox',
+  loturzel:'lotad',lombrero:'lombre',kappalores:'ludicolo',
+  samurzel:'seedot',nuzleaf:'nuzleaf',tengulist:'shiftry',
+  schwalbini:'taillow',schwalboss:'swellow',
+  wingull:'wingull',pelipper:'pelipper',
+  trasla:'ralts',kirlia:'kirlia',guardevoir:'gardevoir',
+  surabi:'surskit',schwimmtens:'masquerain',
+  knilz:'shroomish',kapilz:'breloom',
+  bummelz:'slakoth',muntier:'vigoroth',letarking:'slaking',
+  nincada:'nincada',ninjask:'ninjask',
+  flurmel:'whismur',laermon:'loudred',exploud:'exploud',
+  makuhita:'makuhita',hariyama:'hariyama',azurill:'azurill',
+  nasgnet:'nosepass',eneco:'skitty',enekoro:'delcatty',
+  isso:'sableye',stollunior:'aron',stollrak:'lairon',stolloss:'aggron',
+  meditie:'meditite',meditalis:'medicham',
+  frizelbliz:'electrike',voltenso:'manectric',
+  plusle:'plusle',minun:'minun',volbeat:'volbeat',illumise:'illumise',
+  roselia:'roselia',schlukwech:'gulpin',schluksel:'swalot',
+  riffex:'carvanha','hai-rixa':'sharpedo',
+  wailmer:'wailmer',wailord:'wailord',
+  camaub:'numel',camerupt:'camerupt',qurtel:'torkoal',
+  spoink:'spoink',groink:'grumpig',silur:'spinda',
+  knacklion:'trapinch',vibrava:'vibrava',libelldra:'flygon',
+  tuska:'cacnea',noktuska:'cacturne',
+  wablu:'swablu',altaria:'altaria',
+  sengo:'zangoose',seviper:'seviper',
+  lunastein:'lunatone',sonnfel:'solrock',
+  barschwa:'barboach',welsar:'whiscash',
+  krebscorps:'corphish',krebutack:'crawdaunt',
+  puppance:'baltoy',lepumentas:'claydol',
+  liliep:'lileep',wielie:'cradily',anorith:'anorith',armaldo:'armaldo',
+  barschuft:'feebas',milotic:'milotic',formeo:'castform',
+  kecleon:'kecleon',sphabia:'shuppet',banette:'banette',
+  zwirrlicht:'duskull',dusclops:'dusclops',tropius:'tropius',
+  palimpalim:'chimecho',absol:'absol',woinbaby:'wynaut',
+  schneppke:'snorunt',firnoneis:'glalie',
+  seemops:'spheal',seejong:'sealeo',walraisa:'walrein',
+  perlu:'clamperl',hunteil:'huntail',gorbyss:'gorebyss',
+  relicanth:'relicanth',liebiskus:'luvdisc',
+  kindwurm:'bagon',shelyn:'shelgon',brutalanda:'salamence',
+  beldum:'beldum',metang:'metang',metagross:'metagross',
+  regirock:'regirock',regice:'regice',registeel:'registeel',
+  latias:'latias',latios:'latios',kyogre:'kyogre',groudon:'groudon',
+  rayquaza:'rayquaza',jirachi:'jirachi',deoxys:'deoxys',
+  // Gen 4
+  chelast:'turtwig',chelnussl:'grotle',chelterrar:'torterra',
+  panflam:'chimchar',panpharos:'monferno',panferno:'infernape',
+  piplup:'piplup',dolpod:'prinplup',impoleon:'empoleon',
+  staralili:'starly',staravia:'staravia',staraptor:'staraptor',
+  bidiza:'bidoof',bidifas:'bibarel',
+  zirpeise:'kricketune',zirpurze:'kricketot',
+  sheinux:'shinx',luxio:'luxio',luxtra:'luxray',
+  knospi:'budew',roserade:'roserade',
+  koknodon:'cranidos',rameidon:'rampardos',
+  schilterus:'shieldon',bastiodon:'bastiodon',
+  burmy:'burmy',wormadam:'wormadam',moterpel:'mothim',
+  combee:'combee',honigdame:'vespiquen',pachirisu:'pachirisu',
+  buizel:'buizel',floatzel:'floatzel',
+  cheerib:'cherubi',cherriau:'cherrim',
+  schalellos:'shellos',gastrodon:'gastrodon',ambipom:'ambipom',
+  driftlon:'drifloon',drifzepeli:'drifblim',
+  haspiror:'buneary',schlapor:'lopunny',
+  traunmagus:'mismagius',honorav:'honchkrow',
+  flinck:'glameow',nixant:'purugly',klingplong:'chingling',
+  skotison:'stunky',skuntank:'skuntank',
+  bronzel:'bronzor',bronzong:'bronzong',
+  monollo:'bonsly','pantimos-jr':'mime-jr','pantimos jr':'mime-jr',
+  happing:'happiny',plaudagei:'chatot',hellking:'spiritomb',
+  gible:'gible',gabite:'gabite',garchomp:'garchomp',
+  mampfaxo:'munchlax',riolu:'riolu',lucario:'lucario',
+  hippopotas:'hippopotas',hippowdon:'hippowdon',
+  skorgla:'skorupi',drapion:'drapion',
+  toxiquak:'toxicroak',zaurelian:'carnivine',
+  finneon:'finneon',lumineon:'lumineon',mantike:'mantyke',
+  snibunna:'weavile',magnezone:'magnezone',schlurgi:'lickilicky',
+  tangoloss:'tangrowth',elevoltek:'electivire',magbrant:'magmortar',
+  togekiss:'togekiss',yanmega:'yanmega',
+  folipurba:'leafeon',glaziola:'glaceon',gliscor:'gliscor',
+  mamutel:'mamoswine','porygon-z':'porygon-z',
+  rotom:'rotom',uxie:'uxie',mesprit:'mesprit',azelf:'azelf',
+  dialga:'dialga',palkia:'palkia',heatran:'heatran',
+  regigigas:'regigigas',giratina:'giratina',cresselia:'cresselia',
+  phione:'phione',manaphy:'manaphy',darkrai:'darkrai',
+  shaymin:'shaymin',arceus:'arceus',victini:'victini',
+  // Gen 5
+  serpifeu:'snivy',serpivine:'servine',serpiroyal:'serperior',
+  floink:'tepig',ferkokel:'pignite',flambirex:'emboar',
+  ottaro:'oshawott',zweipirrel:'dewott',admurai:'samurott',
+  yorel:'lillipup',terribark:'herdier',stoutländer:'stoutland',
+  tournicoton:'purrloin',nachtliest:'liepard',
+  vegimak:'pansage',vegichita:'simisage',
+  flohmako:'pansear',flohmakita:'simisear',
+  aquamak:'panpour',aquamakita:'simipour',
+  munna:'munna',musharna:'musharna',
+  dusselgurr:'pidove',irokex:'tranquill',
+  zapplalek:'eelektrik',zebritz:'zebstrika',
+  roggenrola:'roggenrola',gravursa:'graveler',
+  wubat:'woobat',swoobat:'swoobat',
+  rotomurf:'drilbur',stalobor:'excadrill',
+  audino:'audino',
+  tigelomi:'timburr',raciao:'gurdurr',strepoli:'gurdurr',
+  konkombi:'conkeldurr',
+  tamao:'tympole',lipplosiv:'palpitoad',kranovizar:'seismitoad',
+  zobiris:'throh',gallok:'sawk',
+  strawickl:'sewaddle',papinella2:'swadloon',matrifol:'leavanny',
+  peppeck:'venipede',spiradel:'whirlipede',tausengler:'scolipede',
+  watteball:'cottonee',elfun:'whimsicott',
+  lillipalm:'petilil',lillingant:'lilligant',
+  basculin:'basculin',
+  ganovil:'sandile',krokadil:'krokorok',krokodil:'krookodile',
+  flampion:'darumaka',flamiau:'darmanitan',
+  maractus:'maractus',monoklord:'dwebble',crustle:'crustle',
+  gelatini:'scraggy',gelatropez:'scrafty',
+  sigilith:'sigilyph',raunior:'yamask',sarkhan:'cofagrigus',
+  zorua:'zorua',zoroark:'zoroark',
+  picochilla:'minccino',chillabell:'cinccino',
+  gothita:'gothita',gothorita:'gothorita',gothitelle:'gothitelle',
+  solosis:'solosis',duosion:'duosion',zytomega:'reuniclus',
+  ducklett:'ducklett',schwanett:'swanna',
+  vanilish:'vanillite',vanillish:'vanillish',vanilluxe:'vanilluxe',
+  bamelin:'deerling',saganaira:'sawsbuck',
+  emolga:'emolga',karrablast:'karrablast',cavalanzas:'escavalier',
+  tarnpignon:'foongus',amoonguss:'amoonguss',
+  frillish:'frillish',jellicent:'jellicent',alomomola:'alomomola',
+  wattzapf:'joltik',galvantula:'galvantula',
+  ferroseed:'ferroseed',ferrothorn:'ferrothorn',
+  klikk:'klink',klang:'klang',klinklang:'klinklang',
+  elezeba:'tynamo',elektrampe:'eelektross',
+  riesigma:'elgyem',brockoloss:'beheeyem',
+  lichtel:'litwick',lampi2:'lampent',leuchtnix:'chandelure',
+  axew:'axew',fraxure:'fraxure',haxorus:'haxorus',
+  snokebold:'cubchoo',bärtikal:'beartic',cryogonal:'cryogonal',
+  shellmet:'shelmet',accelgor:'accelgor',stunfisk:'stunfisk',
+  kampfhahn:'mienfoo',kampfhahn2:'mienshao',
+  draghignazzo:'druddigon',golbit:'golett',golem2:'golurk',
+  bisharp:'bisharp',pawniard:'pawniard',bouffalant:'bouffalant',
+  rufflet:'rufflet',braviary:'braviary',vullaby:'vullaby',mandibuzz:'mandibuzz',
+  heatmor:'heatmor',durant:'durant',
+  deino:'deino',zweilous:'zweilous',hydreigon:'hydreigon',
+  larvesta:'larvesta',volcarona:'volcarona',
+  cobalion:'cobalion',terrakion:'terrakion',virizion:'virizion',
+  tornadus:'tornadus',thundurus:'thundurus',reshiram:'reshiram',
+  zekrom:'zekrom',landorus:'landorus',kyurem:'kyurem',
+  keldeo:'keldeo',meloetta:'meloetta',genesect:'genesect',
+  // Gen 6
+  chespin:'chespin',quilladin:'quilladin',chesnaught:'chesnaught',
+  fennekin:'fennekin',braixen:'braixen',delphox:'delphox',
+  froakie:'froakie',frogadier:'frogadier',greninja:'greninja',
+  fletchling:'fletchling',fletchinder:'fletchinder',talonflame:'talonflame',
+  vivillon:'vivillon',litleo:'litleo',pyroar:'pyroar',
+  floette:'floette',florges:'florges',flabebe:'flabebe',
+  skiddo:'skiddo',gogoat:'gogoat',pancham:'pancham',pangoro:'pangoro',
+  furfrou:'furfrou',espurr:'espurr',meowstic:'meowstic',
+  honedge:'honedge',doublade:'doublade',aegislash:'aegislash',
+  spritzee:'spritzee',aromatisse:'aromatisse',swirlix:'swirlix',slurpuff:'slurpuff',
+  inkay:'inkay',malamar:'malamar',binacle:'binacle',barbaracle:'barbaracle',
+  skrelp:'skrelp',dragalge:'dragalge',clauncher:'clauncher',clawitzer:'clawitzer',
+  helioptile:'helioptile',heliolisk:'heliolisk',tyrunt:'tyrunt',tyrantrum:'tyrantrum',
+  amaura:'amaura',aurorus:'aurorus',sylveon:'sylveon',hawlucha:'hawlucha',
+  dedenne:'dedenne',carbink:'carbink',goomy:'goomy',sliggoo:'sliggoo',goodra:'goodra',
+  klefki:'klefki',phantump:'phantump',trevenant:'trevenant',
+  pumpkaboo:'pumpkaboo',gourgeist:'gourgeist',bergmite:'bergmite',avalugg:'avalugg',
+  noibat:'noibat',noivern:'noivern',xerneas:'xerneas',yveltal:'yveltal',zygarde:'zygarde',
+  diancie:'diancie',hoopa:'hoopa',volcanion:'volcanion',
+  // Gen 7
+  rowlet:'rowlet',dartrix:'dartrix',decidueye:'decidueye',
+  litten:'litten',torracat:'torracat',incineroar:'incineroar',
+  popplio:'popplio',brionne:'brionne',primarina:'primarina',
+  pikipek:'pikipek',trumbeak:'trumbeak',toucannon:'toucannon',
+  yungoos:'yungoos',gumshoos:'gumshoos',grubbin:'grubbin',charjabug:'charjabug',vikavolt:'vikavolt',
+  crabrawler:'crabrawler',crabominable:'crabominable',oricorio:'oricorio',
+  cutiefly:'cutiefly',ribombee:'ribombee',rockruff:'rockruff',lycanroc:'lycanroc',
+  wishiwashi:'wishiwashi',mareanie:'mareanie',toxapex:'toxapex',
+  mudbray:'mudbray',mudsdale:'mudsdale',dewpider:'dewpider',araquanid:'araquanid',
+  fomantis:'fomantis',lurantis:'lurantis',morelull:'morelull',shiinotic:'shiinotic',
+  salandit:'salandit',salazzle:'salazzle',stufful:'stufful',bewear:'bewear',
+  bounsweet:'bounsweet',steenee:'steenee',tsareena:'tsareena',comfey:'comfey',
+  oranguru:'oranguru',passimian:'passimian',wimpod:'wimpod',golisopod:'golisopod',
+  sandygast:'sandygast',palossand:'palossand',pyukumuku:'pyukumuku',
+  type:'type-null',silvally:'silvally',minior:'minior',komala:'komala',
+  turtonator:'turtonator',togedemaru:'togedemaru',mimikyu:'mimikyu',
+  bruxish:'bruxish',drampa:'drampa',dhelmise:'dhelmise',jangmo:'jangmo-o',
+  hakamo:'hakamo-o',kommo:'kommo-o',tapu:'tapu-koko',
+  cosmog:'cosmog',cosmoem:'cosmoem',solgaleo:'solgaleo',lunala:'lunala',
+  nihilego:'nihilego',buzzwole:'buzzwole',pheromosa:'pheromosa',xurkitree:'xurkitree',
+  celesteela:'celesteela',kartana:'kartana',guzzlord:'guzzlord',
+  necrozma:'necrozma',magearna:'magearna',marshadow:'marshadow',
+  // Gen 8
+  grookey:'grookey',thwackey:'thwackey',rillaboom:'rillaboom',
+  scorbunny:'scorbunny',raboot:'raboot',cinderace:'cinderace',
+  sobble:'sobble',drizzile:'drizzile',inteleon:'inteleon',
+  skwovet:'skwovet',greedent:'greedent',rookidee:'rookidee',corvisquire:'corvisquire',corviknight:'corviknight',
+  blipbug:'blipbug',dottler:'dottler',orbeetle:'orbeetle',
+  nickit:'nickit',thievul:'thievul',gossifleur:'gossifleur',eldegoss:'eldegoss',
+  wooloo:'wooloo',dubwool:'dubwool',chewtle:'chewtle',drednaw:'drednaw',
+  yamper:'yamper',boltund:'boltund',rolycoly:'rolycoly',carkoal:'carkoal',coalossal:'coalossal',
+  applin:'applin',flapple:'flapple',appletun:'appletun',silicobra:'silicobra',sandaconda:'sandaconda',
+  cramorant:'cramorant',arrokuda:'arrokuda',barraskewda:'barraskewda',
+  toxel:'toxel',toxtricity:'toxtricity',sizzlipede:'sizzlipede',centiskorch:'centiskorch',
+  clobbopus:'clobbopus',grapploct:'grapploct',sinistea:'sinistea',polteageist:'polteageist',
+  hatenna:'hatenna',hattrem:'hattrem',hatterene:'hatterene',
+  impidimp:'impidimp',morgrem:'morgrem',grimmsnarl:'grimmsnarl',
+  obstagoon:'obstagoon',perrserker:'perrserker',cursola:'cursola',
+  sirfetch:'sirfetchd',mr:'mr-rime',runerigus:'runerigus',milcery:'milcery',alcremie:'alcremie',
+  falinks:'falinks',pincurchin:'pincurchin',snom:'snom',frosmoth:'frosmoth',
+  stonjourner:'stonjourner',eiscue:'eiscue',indeedee:'indeedee',morpeko:'morpeko',
+  cufant:'cufant',copperajah:'copperajah',dracozolt:'dracozolt',arctozolt:'arctozolt',
+  dracovish:'dracovish',arctovish:'arctovish',duraludon:'duraludon',
+  dreepy:'dreepy',drakloak:'drakloak',dragapult:'dragapult',
+  zacian:'zacian',zamazenta:'zamazenta',eternatus:'eternatus',
+  kubfu:'kubfu',urshifu:'urshifu',zarude:'zarude',
+  regieleki:'regieleki',regidrago:'regidrago',glastrier:'glastrier',spectrier:'spectrier',calyrex:'calyrex',
+  // Gen 9
+  sprigatito:'sprigatito',floragato:'floragato',meowscarada:'meowscarada',
+  fuecoco:'fuecoco',crocalor:'crocalor',skeledirge:'skeledirge',
+  quaxly:'quaxly',quaxwell:'quaxwell',quaquaval:'quaquaval',
+  lechonk:'lechonk',oinkologne:'oinkologne',tarountula:'tarountula',spidops:'spidops',
+  nymble:'nymble',lokix:'lokix',pawmi:'pawmi',pawmo:'pawmo',pawmot:'pawmot',
+  tandemaus:'tandemaus',maushold:'maushold',fidough:'fidough',dachsbun:'dachsbun',
+  smoliv:'smoliv',dolliv:'dolliv',arboliva:'arboliva',
+  squawkabilly:'squawkabilly',nacli:'nacli',naclstack:'naclstack',garganacl:'garganacl',
+  charcadet:'charcadet',armarouge:'armarouge',ceruledge:'ceruledge',
+  tadbulb:'tadbulb',bellibolt:'bellibolt',wattrel:'wattrel',kilowattrel:'kilowattrel',
+  maschiff:'maschiff',mabosstiff:'mabosstiff',shroodle:'shroodle',grafaiai:'grafaiai',
+  bramblin:'bramblin',brambleghast:'brambleghast',toedscool:'toedscool',toedscruel:'toedscruel',
+  klawf:'klawf',capsakid:'capsakid',scovillain:'scovillain',
+  rellor:'rellor',rabsca:'rabsca',flittle:'flittle',espathra:'espathra',
+  tinkatink:'tinkatink',tinkatuff:'tinkatuff',tinkaton:'tinkaton',
+  wiglett:'wiglett',wugtrio:'wugtrio',bombirdier:'bombirdier',
+  finizen:'finizen',palafin:'palafin',varoom:'varoom',revavroom:'revavroom',
+  cyclizar:'cyclizar',orthworm:'orthworm',glimmet:'glimmet',glimmora:'glimmora',
+  greavard:'greavard',houndstone:'houndstone',flamigo:'flamigo',
+  cetoddle:'cetoddle',cetitan:'cetitan',veluza:'veluza',dondozo:'dondozo',
+  tatsugiri:'tatsugiri',annihilape:'annihilape',clodsire:'clodsire',
+  farigiraf:'farigiraf',dudunsparce:'dudunsparce',kingambit:'kingambit',
+  great:'great-tusk',scream:'scream-tail',brute:'brute-bonnet',
+  flutter:'flutter-mane',slither:'slither-wing',sandy:'sandy-shocks',
+  iron:'iron-treads',roaring:'roaring-moon',
+  koraidon:'koraidon',miraidon:'miraidon',
+  wo:'wo-chien',chien:'chien-pao',ting:'ting-lu',chi:'chi-yu',
+  ogerpon:'ogerpon',terapagos:'terapagos',pecharunt:'pecharunt',
+};
+
+// ============================================================
+//  DATA & CONFIG
+// ============================================================
+
+const GAMES = [
+  { id: 'rb',  name: 'Rot / Blau',     gen: 1, gyms: [
+    {name:'Arenastadt',emoji:'🪨',level:12},{name:'Blaumond City',emoji:'💧',level:21},{name:'Vermilion City',emoji:'⚡',level:24},{name:'Lavendel City',emoji:'👻',level:29},
+    {name:'Fuchsia City',emoji:'☠️',level:43},{name:'Saffronia City',emoji:'🧠',level:43},{name:'Cinnabar Island',emoji:'🔥',level:47},{name:'Viridian City',emoji:'🌍',level:50},
+    {name:'Top4 - Lorelei',emoji:'🧊',level:54},{name:'Top4 - Bruno',emoji:'🥊',level:58},{name:'Top4 - Agatha',emoji:'👻',level:60},{name:'Top4 - Lance',emoji:'🐉',level:62},{name:'Champion Gary',emoji:'⭐',level:65}
+  ]},
+  { id: 'gs',  name: 'Gold / Silber',  gen: 2, gyms: [
+    {name:'Violstadt',emoji:'🌸',level:18},{name:'Azuria City',emoji:'💧',level:25},{name:'Malvenfroh',emoji:'⚡',level:30},{name:'Ecruteak City',emoji:'👻',level:35},
+    {name:'Cianwood City',emoji:'🥊',level:35},{name:'Olivine City',emoji:'⚙️',level:40},{name:'Mahogany Town',emoji:'🧊',level:42},{name:'Blackthorn City',emoji:'🐉',level:44},
+    {name:'Top4 - Will',emoji:'🧠',level:50},{name:'Top4 - Koga',emoji:'☠️',level:52},{name:'Top4 - Bruno',emoji:'🥊',level:52},{name:'Top4 - Karen',emoji:'🌑',level:55},{name:'Champion Lance',emoji:'🐉',level:58},
+    {name:'Petra',emoji:'🪨',level:60},{name:'Misty',emoji:'💧',level:60},{name:'Lt. Surge',emoji:'⚡',level:60},{name:'Erika',emoji:'🌿',level:60},{name:'Janine',emoji:'☠️',level:60},{name:'Sabrina',emoji:'🧠',level:60},{name:'Blaine',emoji:'🔥',level:60},{name:'Blue',emoji:'🌍',level:60}
+  ]},
+  { id: 'rs',  name: 'Rubin / Saphir', gen: 3, gyms: [
+    {name:'Petaltburg City',emoji:'Normal',level:14},{name:'Rustboro City',emoji:'🪨',level:18},{name:'Dewford Town',emoji:'🥊',level:23},{name:'Mauville City',emoji:'⚡',level:28},
+    {name:'Lavaridge Town',emoji:'🔥',level:31},{name:'Petalburg City',emoji:'💪',level:39},{name:'Fortree City',emoji:'🦅',level:41},{name:'Mossdeep City',emoji:'🧠',level:45},
+    {name:'Sootopolis City',emoji:'💧',level:47},{name:'Top4 - Sidney',emoji:'🌑',level:48},{name:'Top4 - Phoebe',emoji:'👻',level:51},{name:'Top4 - Glacia',emoji:'🧊',level:53},{name:'Top4 - Drake',emoji:'🐉',level:55},{name:'Champion Wallace',emoji:'💧',level:58}
+  ]},
+  { id: 'dp',  name: 'Diamant / Perle', gen: 4, gyms: [
+    {name:'Oreburgh City',emoji:'🪨',level:14},{name:'Eterna City',emoji:'🌿',level:22},{name:'Veilstone City',emoji:'🥊',level:28},{name:'Pastoria City',emoji:'💧',level:34},
+    {name:'Hearthome City',emoji:'👻',level:36},{name:'Canalave City',emoji:'⚙️',level:41},{name:'Snowpoint City',emoji:'🧊',level:44},{name:'Sunyshore City',emoji:'⚡',level:47},
+    {name:'Top4 - Aaron',emoji:'🐛',level:53},{name:'Top4 - Bertha',emoji:'🌍',level:55},{name:'Top4 - Flint',emoji:'🔥',level:57},{name:'Top4 - Lucian',emoji:'🧠',level:59},{name:'Champion Cynthia',emoji:'⭐',level:62}
+  ]},
+  { id: 'bw',  name: 'Schwarz / Weiß',  gen: 5, gyms: [
+    {name:'Striaton City',emoji:'🍃',level:15},{name:'Nacrene City',emoji:'Normal',level:18},{name:'Castelia City',emoji:'🐛',level:21},{name:'Nimbasa City',emoji:'⚡',level:25},
+    {name:'Driftveil City',emoji:'🌍',level:29},{name:'Mistralton City',emoji:'🦅',level:33},{name:'Icirrus City',emoji:'🧊',level:37},{name:'Opelucid City',emoji:'🐉',level:41},
+    {name:'Top4 - Shauntal',emoji:'👻',level:48},{name:'Top4 - Marshal',emoji:'🥊',level:48},{name:'Top4 - Grimsley',emoji:'🌑',level:48},{name:'Top4 - Caitlin',emoji:'🧠',level:48},{name:'Champion N / Alder',emoji:'⭐',level:52}
+  ]},
+  { id: 'xy',  name: 'X / Y',           gen: 6, gyms: [
+    {name:'Santalune City',emoji:'🐛',level:14},{name:'Cyllage City',emoji:'🪨',level:25},{name:'Shalour City',emoji:'🥊',level:29},{name:'Coumarine City',emoji:'🌿',level:31},
+    {name:'Lumiose City',emoji:'⚡',level:35},{name:'Laverre City',emoji:'🧚',level:40},{name:'Anistar City',emoji:'🧠',level:42},{name:'Snowbelle City',emoji:'🧊',level:46},
+    {name:'Top4 - Malva',emoji:'🔥',level:50},{name:'Top4 - Siebold',emoji:'💧',level:52},{name:'Top4 - Wikstrom',emoji:'⚙️',level:52},{name:'Top4 - Drasna',emoji:'🐉',level:53},{name:'Champion Diantha',emoji:'⭐',level:55}
+  ]},
+  { id: 'sm',  name: 'Sonne / Mond',    gen: 7, gyms: [
+    {name:'Ilima Trial',emoji:'Normal',level:12},{name:'Lana Trial',emoji:'💧',level:22},{name:'Kiawe Trial',emoji:'🔥',level:26},{name:'Mallow Trial',emoji:'🌿',level:29},
+    {name:'Sophocles Trial',emoji:'⚡',level:33},{name:'Acerola Trial',emoji:'👻',level:37},{name:'Mina Trial',emoji:'🧚',level:49},
+    {name:'Kahuna Hala',emoji:'🥊',level:19},{name:'Kahuna Olivia',emoji:'🪨',level:31},{name:'Kahuna Nanu',emoji:'🌑',level:41},{name:'Kahuna Hapu',emoji:'🌍',level:53},
+    {name:'Elite4 Hala',emoji:'🥊',level:54},{name:'Elite4 Olivia',emoji:'🪨',level:55},{name:'Elite4 Acerola',emoji:'👻',level:55},{name:'Elite4 Kahili',emoji:'🦅',level:56},{name:'Champion',emoji:'⭐',level:58}
+  ]},
+  { id: 'swsh', name: 'Schwert / Schild', gen: 8, gyms: [
+    {name:'Turffield',emoji:'🌿',level:19},{name:'Hulbury',emoji:'💧',level:24},{name:'Motostoke',emoji:'🔥',level:25},{name:'Stow-on-Side (Kampf)',emoji:'🥊',level:34},
+    {name:'Stow-on-Side (Geist)',emoji:'👻',level:34},{name:'Ballonlea',emoji:'🧚',level:36},{name:'Circhester (Gestein)',emoji:'🪨',level:40},{name:'Circhester (Eis)',emoji:'🧊',level:40},
+    {name:'Spikemuth',emoji:'🌑',level:44},{name:'Hammerlocke',emoji:'🐉',level:48},
+    {name:'Top4 - Bede',emoji:'🧚',level:52},{name:'Top4 - Marnie',emoji:'🌑',level:52},{name:'Top4 - Nessa',emoji:'💧',level:52},{name:'Top4 - Bea/Allister',emoji:'🥊',level:52},{name:'Champion Leon',emoji:'⭐',level:62}
+  ]},
+  { id: 'sv',  name: 'Karmesin / Purpur', gen: 9, gyms: [
+    {name:'Cortondo',emoji:'🐛',level:14},{name:'Artazon',emoji:'🌿',level:17},{name:'Levincia',emoji:'⚡',level:23},{name:'Cascarrafa',emoji:'💧',level:29},
+    {name:'Medali',emoji:'Normal',level:35},{name:'Montenevera',emoji:'👻',level:41},{name:'Alfornada',emoji:'🧠',level:44},{name:'Glaseado',emoji:'🧊',level:48},
+    {name:'Top4 - Rika',emoji:'🌍',level:57},{name:'Top4 - Poppy',emoji:'⚙️',level:58},{name:'Top4 - Larry',emoji:'🦅',level:59},{name:'Top4 - Hassel',emoji:'🐉',level:60},{name:'Champion Geeta',emoji:'⭐',level:62}
+  ]},
+];
+
+const TYPE_MAP = {
+  normal:'normal',fire:'fire',water:'water',electric:'electric',grass:'grass',
+  ice:'ice',fighting:'fighting',poison:'poison',ground:'ground',flying:'flying',
+  psychic:'psychic',bug:'bug',rock:'rock',ghost:'ghost',dragon:'dragon',
+  dark:'dark',steel:'steel',fairy:'fairy'
+};
+
+const TYPE_DE = {
+  normal:'Normal',fire:'Feuer',water:'Wasser',electric:'Elektro',grass:'Pflanze',
+  ice:'Eis',fighting:'Kampf',poison:'Gift',ground:'Boden',flying:'Flug',
+  psychic:'Psycho',bug:'Käfer',rock:'Gestein',ghost:'Geist',dragon:'Drache',
+  dark:'Unlicht',steel:'Stahl',fairy:'Fee'
+};
+
+// ============================================================
+//  STATE
+// ============================================================
+
+let state = {
+  runName: '',
+  playerCount: 3,
+  gameId: 'bw',
+  completedGyms: [],
+  players: []
+};
+
+let searchDebounce = null;
+let selectedPokemon = null;
+let editingSlot = null; // {playerId, slotIdx}
+
+// ============================================================
+//  INIT
+// ============================================================
+
+function init() {
+  loadData();
+  renderGameSelect();
+  renderPlayerCountSelect();
+  renderGyms();
+  renderPlayers();
+  updateTotalDeaths();
+
+  document.getElementById('runName').value = state.runName;
+  document.getElementById('runName').addEventListener('input', e => {
+    state.runName = e.target.value;
+    saveData();
+  });
+
+  document.getElementById('pokeSearch').addEventListener('input', onPokeSearchInput);
+
+  document.addEventListener('click', e => {
+    if (!document.getElementById('contextMenu').contains(e.target)) {
+      hideContextMenu();
+    }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeModal(); hideContextMenu(); }
+  });
+}
+
+// ============================================================
+//  GAME SELECT
+// ============================================================
+
+function renderGameSelect() {
+  const sel = document.getElementById('gameSelect');
+  sel.innerHTML = GAMES.map(g => `<option value="${g.id}" ${g.id===state.gameId?'selected':''}>${g.name}</option>`).join('');
+  sel.addEventListener('change', e => {
+    state.gameId = e.target.value;
+    state.completedGyms = [];
+    renderGyms();
+    saveData();
+  });
+}
+
+function getGame() { return GAMES.find(g => g.id === state.gameId) || GAMES[0]; }
+
+// ============================================================
+//  PLAYER COUNT
+// ============================================================
+
+function renderPlayerCountSelect() {
+  const wrap = document.getElementById('playerCountSelect');
+  wrap.innerHTML = [1,2,3,4,5,6].map(n =>
+    `<button class="count-btn ${n===state.playerCount?'active':''}" onclick="setPlayerCount(${n})">${n}</button>`
+  ).join('');
+}
+
+function setPlayerCount(n) {
+  if (n === state.playerCount) return;
+  state.playerCount = n;
+  // Ensure players array has correct length
+  while (state.players.length < n) {
+    state.players.push(createPlayer(state.players.length + 1));
+  }
+  renderPlayerCountSelect();
+  renderPlayers();
+  saveData();
+}
+
+function createPlayer(num) {
+  return {
+    id: Date.now() + Math.random(),
+    name: `Spieler ${num}`,
+    team: new Array(6).fill(null),
+    deadBox: []
+  };
+}
+
+// ============================================================
+//  GYMS
+// ============================================================
+
+function renderGyms() {
+  const grid = document.getElementById('gymsGrid');
+  const game = getGame();
+  grid.innerHTML = game.gyms.map((gym, i) => `
+    <div class="gym-badge ${state.completedGyms.includes(i)?'completed':''}" onclick="toggleGym(${i})">
+      <span class="badge-icon">${gym.emoji}</span>
+      <span class="badge-name">${gym.name}</span>
+      <span class="badge-level">Lv ${gym.level}</span>
+    </div>
+  `).join('');
+}
+
+function toggleGym(i) {
+  const idx = state.completedGyms.indexOf(i);
+  if (idx >= 0) state.completedGyms.splice(idx, 1);
+  else state.completedGyms.push(i);
+  renderGyms();
+  saveData();
+}
+
+// ============================================================
+//  PLAYERS
+// ============================================================
+
+function renderPlayers() {
+  const grid = document.getElementById('playersGrid');
+  const count = state.playerCount;
+  const players = state.players.slice(0, count);
+
+  grid.innerHTML = players.map((p, pi) => renderPlayerCard(p, pi)).join('');
+
+  // Bind name inputs
+  players.forEach((p, pi) => {
+    const inp = document.getElementById(`pname-${pi}`);
+    if (inp) inp.addEventListener('input', e => {
+      state.players[pi].name = e.target.value;
+      saveData();
+    });
+  });
+}
+
+function renderPlayerCard(player, pi) {
+  const deaths = player.deadBox.length;
+  const teamHTML = player.team.map((poke, si) => renderPokeSlot(poke, pi, si)).join('');
+  const deadHTML = player.deadBox.length > 0 ? `
+    <div class="dead-box">
+      <div class="dead-box-title">💀 Friedhof (${player.deadBox.length})</div>
+      <div class="dead-list">
+        ${player.deadBox.map(p => `
+          <div class="dead-poke-mini">
+            <img src="${p.sprite}" alt="${p.species}" onerror="this.style.display='none'" />
+            <span>${p.nickname || p.species}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  ` : '';
+
+  return `
+    <div class="player-card" id="player-${pi}">
+      <div class="player-header">
+        <div class="player-avatar" id="avatar-${pi}" title="Avatar ändern" onclick="changeAvatar(${pi})">
+          ${player.avatarUrl ? `<img src="${player.avatarUrl}" onerror="this.parentElement.innerHTML='👤'" />` : '👤'}
+        </div>
+        <div class="player-info">
+          <input class="player-name-input" id="pname-${pi}" value="${escHtml(player.name)}" placeholder="Spielername..." maxlength="30" />
+          <div class="player-stats">
+            <div class="stat-item deaths">💀 Tode: <span class="stat-val">${deaths}</span></div>
+          </div>
+        </div>
+        <div class="player-actions">
+          <button class="btn btn-icon btn-sm" title="Avatar-URL" onclick="promptAvatar(${pi})">🖼️</button>
+        </div>
+      </div>
+      <div class="team-grid">${teamHTML}</div>
+      ${deadHTML}
+    </div>
+  `;
+}
+
+function renderPokeSlot(poke, pi, si) {
+  if (!poke) {
+    return `
+      <div class="poke-slot empty" onclick="openContextMenu(event, ${pi}, ${si})" data-pi="${pi}" data-si="${si}">
+        <span class="slot-add-icon">＋</span>
+        <span class="slot-add-text">Leer</span>
+      </div>
+    `;
+  }
+
+  const typeBadges = poke.types.map(t =>
+    `<span class="type-badge t-${t}">${TYPE_DE[t] || t}</span>`
+  ).join('');
+
+  return `
+    <div class="poke-slot ${poke.dead ? 'dead' : ''}" onclick="openContextMenu(event, ${pi}, ${si})" data-pi="${pi}" data-si="${si}">
+      <img class="poke-sprite" src="${poke.sprite}" alt="${poke.species}" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png'" />
+      ${poke.nickname ? `<div class="poke-nickname">"${escHtml(poke.nickname)}"</div>` : ''}
+      <div class="poke-species">${escHtml(poke.species)}</div>
+      <div class="poke-types">${typeBadges}</div>
+      ${poke.location ? `<div class="poke-location">📍 ${escHtml(poke.location)}</div>` : ''}
+    </div>
+  `;
+}
+
+// ============================================================
+//  CONTEXT MENU
+// ============================================================
+
+function openContextMenu(event, pi, si) {
+  event.stopPropagation();
+  const menu = document.getElementById('contextMenu');
+  const poke = state.players[pi]?.team[si];
+
+  let items = '';
+
+  if (poke) {
+    if (!poke.dead) {
+      items += `<button class="context-item danger" onclick="markDead(${pi},${si});hideContextMenu()"><span class="ci-icon">💀</span> Als Tod markieren</button>`;
+    } else {
+      items += `<button class="context-item" onclick="revivePoke(${pi},${si});hideContextMenu()"><span class="ci-icon">✨</span> Wiederbeleben</button>`;
+    }
+    items += `<button class="context-item" onclick="openModal(${pi},${si});hideContextMenu()"><span class="ci-icon">✏️</span> Pokémon ändern</button>`;
+    items += `<button class="context-item danger" onclick="removePoke(${pi},${si});hideContextMenu()"><span class="ci-icon">🗑️</span> Entfernen</button>`;
+  } else {
+    items += `<button class="context-item" onclick="openModal(${pi},${si});hideContextMenu()"><span class="ci-icon">➕</span> Pokémon hinzufügen</button>`;
+  }
+
+  const header = poke
+    ? `<div class="context-menu-header">
+         <img src="${poke.sprite}" style="width:24px;height:24px;image-rendering:pixelated;object-fit:contain;" />
+         ${escHtml(poke.nickname || poke.species)}
+       </div>`
+    : `<div class="context-menu-header">Slot ${si + 1}</div>`;
+
+  menu.innerHTML = header + items;
+  menu.classList.remove('hidden');
+
+  // Position
+  const rect = event.target.closest('.poke-slot').getBoundingClientRect();
+  let x = rect.right + 8;
+  let y = rect.top;
+  if (x + 190 > window.innerWidth) x = rect.left - 190;
+  if (y + menu.offsetHeight > window.innerHeight) y = window.innerHeight - menu.offsetHeight - 8;
+  menu.style.left = x + 'px';
+  menu.style.top = y + 'px';
+}
+
+function hideContextMenu() {
+  document.getElementById('contextMenu').classList.add('hidden');
+}
+
+// ============================================================
+//  POKEMON ACTIONS
+// ============================================================
+
+function markDead(pi, si) {
+  const player = state.players[pi];
+  const poke = player.team[si];
+  if (!poke) return;
+  poke.dead = true;
+  player.deadBox.push({...poke});
+  player.team[si] = null;
+  renderPlayers();
+  updateTotalDeaths();
+  saveData();
+  showToast(`💀 ${poke.nickname || poke.species} ist gestorben`, 'error');
+}
+
+function revivePoke(pi, si) {
+  const poke = state.players[pi].team[si];
+  if (!poke) return;
+  poke.dead = false;
+  renderPlayers();
+  saveData();
+}
+
+function removePoke(pi, si) {
+  state.players[pi].team[si] = null;
+  renderPlayers();
+  saveData();
+}
+
+// ============================================================
+//  MODAL
+// ============================================================
+
+function openModal(pi, si) {
+  editingSlot = { pi, si };
+  selectedPokemon = null;
+  const existing = state.players[pi].team[si];
+
+  document.getElementById('pokeSearch').value = '';
+  document.getElementById('pokeNickname').value = existing?.nickname || '';
+  document.getElementById('pokeLocation').value = existing?.location || '';
+  document.getElementById('searchResults').classList.add('hidden');
+  document.getElementById('modalConfirmBtn').textContent = existing ? '✅ Speichern' : '✅ Hinzufügen';
+  document.getElementById('modalTitle').innerHTML = existing ? '✏️ Pokémon ändern' : '➕ Pokémon hinzufügen';
+
+  if (existing) {
+    selectedPokemon = existing;
+    updateModalPreview(existing);
+  } else {
+    document.getElementById('modalPreview').innerHTML =
+      `<div style="color:var(--text3);font-size:13px;text-align:center;width:100%;">Suche ein Pokémon...</div>`;
+  }
+
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.getElementById('pokeSearch').focus();
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  editingSlot = null;
+  selectedPokemon = null;
+}
+
+function updateModalPreview(poke) {
+  const typeBadges = poke.types.map(t =>
+    `<span class="type-badge t-${t}" style="padding:2px 8px;font-size:10px;">${TYPE_DE[t] || t}</span>`
+  ).join('');
+
+  document.getElementById('modalPreview').innerHTML = `
+    <img class="preview-sprite" src="${poke.sprite}" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png'" />
+    <div class="preview-info">
+      <div class="preview-name">${escHtml(poke.species)}</div>
+      <div class="preview-types">${typeBadges}</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:4px;">#${String(poke.id||'?').padStart(3,'0')}</div>
+    </div>
+  `;
+}
+
+async function onPokeSearchInput() {
+  clearTimeout(searchDebounce);
+  const q = document.getElementById('pokeSearch').value.trim().toLowerCase();
+  if (!q) {
+    document.getElementById('searchResults').classList.add('hidden');
+    return;
+  }
+  searchDebounce = setTimeout(() => fetchPokeSearch(q), 350);
+}
+
+async function fetchPokeSearch(q) {
+  const resultsEl = document.getElementById('searchResults');
+  resultsEl.innerHTML = `<div style="padding:10px 12px;font-size:12px;color:var(--text2);">Suche... <span class="search-spinner"></span></div>`;
+  resultsEl.classList.remove('hidden');
+
+  try {
+    // 1. Check German→English lookup table first (exact match)
+    const deExact = DE_TO_EN[q];
+    if (deExact) {
+      const poke = await fetchPokemonByNameOrId(deExact);
+      if (poke) {
+        resultsEl.classList.add('hidden');
+        selectedPokemon = poke;
+        updateModalPreview(poke);
+        return;
+      }
+    }
+
+    // 2. Try direct API lookup (English name or #ID)
+    const direct = await fetchPokemonByNameOrId(q);
+    if (direct) {
+      resultsEl.classList.add('hidden');
+      selectedPokemon = direct;
+      updateModalPreview(direct);
+      return;
+    }
+
+    // 3. Partial match against German name lookup table
+    const deMatches = Object.entries(DE_TO_EN)
+      .filter(([de]) => de.includes(q))
+      .slice(0, 8);
+
+    // 4. Also build partial English name list from cached pokemon list
+    if (!window._pokeList) {
+      try {
+        const r = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1025&offset=0');
+        const d = await r.json();
+        window._pokeList = d.results; // [{name, url}]
+      } catch { window._pokeList = []; }
+    }
+    const enMatches = (window._pokeList || [])
+      .filter(p => p.name.includes(q))
+      .slice(0, 6);
+
+    // Merge: German matches first, then English
+    const combinedEnNames = [
+      ...deMatches.map(([, en]) => en),
+      ...enMatches.map(p => p.name),
+    ];
+    // Deduplicate
+    const uniqueNames = [...new Set(combinedEnNames)].slice(0, 7);
+
+    if (uniqueNames.length === 0) {
+      resultsEl.innerHTML = `<div style="padding:10px 12px;font-size:12px;color:var(--text2);">Kein Pokémon gefunden 🔍</div>`;
+      return;
+    }
+
+    // Fetch data for each match (parallel)
+    const items = await Promise.all(uniqueNames.map(async name => {
+      try {
+        const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+        if (!r.ok) return null;
+        const d = await r.json();
+        // Find German display name from reverse lookup
+        const deName = Object.keys(DE_TO_EN).find(k => DE_TO_EN[k] === d.name) || null;
+        return {
+          id: d.id,
+          name: capitalize(d.name),
+          deName: deName ? capitalize(deName) : null,
+          sprite: d.sprites.front_default || `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${d.id}.png`,
+          types: d.types.map(t => t.type.name)
+        };
+      } catch { return null; }
+    }));
+
+    const valid = items.filter(Boolean);
+    if (valid.length === 0) {
+      resultsEl.innerHTML = `<div style="padding:10px 12px;font-size:12px;color:var(--text2);">Kein Pokémon gefunden 🔍</div>`;
+      return;
+    }
+
+    resultsEl.innerHTML = valid.map(p => {
+      const typesHtml = p.types.map(t =>
+        `<span class="type-badge t-${t}" style="padding:1px 5px;font-size:8px;">${TYPE_DE[t]||t}</span>`
+      ).join('');
+      const safeSprite = p.sprite ? p.sprite.replace(/'/g, "\\'") : '';
+      const safeName = p.name.replace(/'/g, "\\'");
+      const safeTypes = JSON.stringify(p.types).replace(/"/g,"'");
+      return `
+        <div class="search-result-item" onclick="selectSearchResult(${p.id}, '${safeName}', '${safeSprite}', ${safeTypes})">
+          <img src="${p.sprite}" onerror="this.style.display='none'" />
+          <div>
+            <div class="sr-name">${p.deName ? `${p.deName} <span style="color:var(--text3);font-size:10px;">(${p.name})</span>` : p.name}</div>
+            <div class="sr-id">#${String(p.id).padStart(3,'0')}</div>
+          </div>
+          <div style="display:flex;gap:3px;margin-left:auto;">${typesHtml}</div>
+        </div>`;
+    }).join('');
+
+  } catch (err) {
+    console.error(err);
+    resultsEl.innerHTML = `<div style="padding:10px 12px;font-size:12px;color:var(--accent);">Fehler: ${err.message}</div>`;
+  }
+}
+
+async function fetchPokemonByNameOrId(query) {
+  try {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${encodeURIComponent(query)}`);
+    if (!res.ok) return null;
+    const d = await res.json();
+    // Try to find German display name
+    const deName = Object.keys(DE_TO_EN).find(k => DE_TO_EN[k] === d.name);
+    return {
+      id: d.id,
+      species: deName ? capitalize(deName) : capitalize(d.name),
+      sprite: d.sprites.front_default || `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${d.id}.png`,
+      types: d.types.map(t => t.type.name)
+    };
+  } catch { return null; }
+}
+
+function selectSearchResult(id, name, sprite, types) {
+  selectedPokemon = { id, species: name, sprite, types };
+  updateModalPreview(selectedPokemon);
+  document.getElementById('searchResults').classList.add('hidden');
+  document.getElementById('pokeSearch').value = name;
+}
+
+function confirmAddPokemon() {
+  if (!selectedPokemon) {
+    showToast('Bitte erst ein Pokémon suchen!', 'error');
+    return;
+  }
+
+  const nickname = document.getElementById('pokeNickname').value.trim();
+  const location = document.getElementById('pokeLocation').value.trim();
+
+  const poke = {
+    ...selectedPokemon,
+    nickname,
+    location,
+    dead: false
+  };
+
+  state.players[editingSlot.pi].team[editingSlot.si] = poke;
+  closeModal();
+  renderPlayers();
+  saveData();
+  showToast(`✅ ${nickname || poke.species} hinzugefügt!`);
+}
+
+// ============================================================
+//  AVATAR
+// ============================================================
+
+function promptAvatar(pi) {
+  const url = prompt('Avatar-URL (Twitch/Bild-URL):', state.players[pi].avatarUrl || '');
+  if (url === null) return;
+  state.players[pi].avatarUrl = url.trim();
+  renderPlayers();
+  saveData();
+}
+
+function changeAvatar(pi) { promptAvatar(pi); }
+
+// ============================================================
+//  PERSIST
+// ============================================================
+
+function saveData() {
+  try {
+    localStorage.setItem('nuzlocke_v2', JSON.stringify(state));
+  } catch(e) {}
+}
+
+function loadData() {
+  try {
+    const saved = localStorage.getItem('nuzlocke_v2');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      state = { ...state, ...parsed };
+      // Ensure players array
+      while (state.players.length < state.playerCount) {
+        state.players.push(createPlayer(state.players.length + 1));
+      }
+    } else {
+      // Default 3 players
+      state.players = [1,2,3].map(n => createPlayer(n));
+    }
+  } catch(e) {
+    state.players = [1,2,3].map(n => createPlayer(n));
+  }
+}
+
+function resetAll() {
+  if (!confirm('Wirklich alles zurücksetzen?')) return;
+  localStorage.removeItem('nuzlocke_v2');
+  state = { runName:'', playerCount:3, gameId:'bw', completedGyms:[], players:[1,2,3].map(n=>createPlayer(n)) };
+  document.getElementById('runName').value = '';
+  document.getElementById('gameSelect').value = 'bw';
+  renderPlayerCountSelect();
+  renderGyms();
+  renderPlayers();
+  updateTotalDeaths();
+  showToast('🔄 Alles zurückgesetzt!');
+}
+
+// ============================================================
+//  HELPERS
+// ============================================================
+
+function updateTotalDeaths() {
+  const total = state.players.slice(0, state.playerCount).reduce((s, p) => s + p.deadBox.length, 0);
+  document.getElementById('totalDeathsLabel').innerHTML =
+    `Gesamt Tode: <b style="color:var(--accent)">${total}</b>`;
+}
+
+function showToast(msg, type='success') {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast${type==='error'?' error':''}`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function capitalize(str) {
+  if (!str) return str;
+  // Capitalize each word for German names
+  return str.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('-');
+}
+
+// ============================================================
+//  BOOT
+// ============================================================
+init();
+</script>
+</body>
+</html>
