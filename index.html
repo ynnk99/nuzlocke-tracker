@@ -547,6 +547,211 @@
       filter: grayscale(100%);
     }
 
+    /* ===== BOX MANAGEMENT ===== */
+    .box-section {
+      border-top: 1px solid var(--border);
+    }
+
+    .box-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+    }
+    .box-header:hover { background: var(--card2); }
+
+    .box-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text2);
+      letter-spacing: 0.5px;
+    }
+
+    .box-toggle {
+      font-size: 11px;
+      color: var(--text3);
+    }
+
+    .box-body.hidden { display: none; }
+
+    .box-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0 12px 12px;
+    }
+
+    .box-slot {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 6px 5px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      width: 76px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      overflow: hidden;
+    }
+    .box-slot:hover:not(.dead) {
+      border-color: var(--accent);
+      background: var(--card2);
+    }
+    .box-slot .poke-sprite { width: 44px; height: 44px; }
+    .box-slot .poke-nickname { font-size: 8px; }
+    .box-slot .poke-species { font-size: 7px; }
+    .box-slot .type-badge { font-size: 6px; padding: 1px 3px; }
+    .box-slot.dead { background: var(--dead-bg); border-color: var(--dead); opacity: 0.7; }
+    .box-slot.dead::after {
+      content: '💀';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      background: rgba(31, 10, 10, 0.65);
+      border-radius: 7px;
+      pointer-events: none;
+    }
+
+    .box-slot.box-add {
+      border-style: dashed;
+      border-color: var(--text3);
+      justify-content: center;
+      min-height: 66px;
+    }
+    .box-slot.box-add:hover { border-color: var(--accent); }
+    .box-slot.box-add .slot-add-icon { font-size: 18px; }
+
+    /* ===== SOULLINK ===== */
+    .link-badge {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      z-index: 2;
+      box-shadow: 0 0 6px rgba(0,0,0,0.5);
+    }
+
+    .links-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .links-empty {
+      font-size: 12px;
+      color: var(--text3);
+      padding: 4px 2px;
+    }
+
+    .link-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+    .link-group.dead { opacity: 0.55; }
+
+    .link-group-members {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .link-member {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--card2);
+      border-radius: 6px;
+      padding: 3px 8px 3px 4px;
+    }
+    .link-member img {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+    .link-member-player {
+      font-size: 9px;
+      color: var(--text2);
+      font-weight: 700;
+    }
+    .link-member-name {
+      font-size: 11px;
+      color: var(--text);
+      font-weight: 600;
+    }
+    .link-connector {
+      font-size: 12px;
+      color: var(--text3);
+    }
+
+    .link-picker-list {
+      max-height: 320px;
+      overflow-y: auto;
+      margin-bottom: 8px;
+    }
+    .link-picker-group { margin-bottom: 10px; }
+    .link-picker-player {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text2);
+      margin-bottom: 4px;
+    }
+    .link-picker-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      margin-bottom: 4px;
+      transition: background 0.15s;
+    }
+    .link-picker-item:hover { background: var(--card2); border-color: var(--accent); }
+    .link-picker-item.active { border-color: var(--accent); background: rgba(230,57,70,0.1); }
+    .link-picker-item img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+    .link-picker-item span:not(.link-picker-tag) { font-size: 13px; font-weight: 600; flex: 1; }
+    .link-picker-tag {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+    }
+
     /* ===== CONTEXT MENU ===== */
     .context-menu {
       position: fixed;
@@ -855,6 +1060,12 @@
       <div class="gyms-grid" id="gymsGrid"></div>
     </div>
 
+    <!-- SOULLINKS -->
+    <div class="gyms-section">
+      <div class="gyms-title">🔗 Soullink-Verknüpfungen</div>
+      <div class="links-list" id="linksSection"></div>
+    </div>
+
     <!-- PLAYERS -->
     <div class="players-grid" id="playersGrid"></div>
 
@@ -895,6 +1106,17 @@
     <div class="modal-actions">
       <button class="btn" onclick="closeModal()">Abbrechen</button>
       <button class="btn btn-primary" id="modalConfirmBtn" onclick="confirmAddPokemon()">✅ Hinzufügen</button>
+    </div>
+  </div>
+</div>
+
+<!-- SOULLINK PICKER MODAL -->
+<div class="modal-overlay hidden" id="linkPickerOverlay" onclick="if(event.target===this) closeLinkPicker()">
+  <div class="modal">
+    <div class="modal-title" id="linkPickerTitle">🔗 Verlinken</div>
+    <div class="link-picker-list" id="linkPickerList"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeLinkPicker()">Schließen</button>
     </div>
   </div>
 </div>
@@ -1256,52 +1478,52 @@ const DE_TO_EN = {
 
 const GAMES = [
   { id: 'rb',  name: 'Rot / Blau',     gen: 1, gyms: [
-    {name:'Arenastadt',emoji:'🪨',level:12},{name:'Blaumond City',emoji:'💧',level:21},{name:'Vermilion City',emoji:'⚡',level:24},{name:'Lavendel City',emoji:'👻',level:29},
-    {name:'Fuchsia City',emoji:'☠️',level:43},{name:'Saffronia City',emoji:'🧠',level:43},{name:'Cinnabar Island',emoji:'🔥',level:47},{name:'Viridian City',emoji:'🌍',level:50},
-    {name:'Top4 - Lorelei',emoji:'🧊',level:54},{name:'Top4 - Bruno',emoji:'🥊',level:58},{name:'Top4 - Agatha',emoji:'👻',level:60},{name:'Top4 - Lance',emoji:'🐉',level:62},{name:'Champion Gary',emoji:'⭐',level:65}
+    {name:'Marmoria City',emoji:'🪨',level:12},{name:'Azuria City',emoji:'💧',level:21},{name:'Orania City',emoji:'⚡',level:24},{name:'Prismania City',emoji:'🌿',level:29},
+    {name:'Fuchsania City',emoji:'☠️',level:43},{name:'Saffronia City',emoji:'🧠',level:43},{name:'Zinnoberinsel',emoji:'🔥',level:47},{name:'Vertania City',emoji:'🌍',level:50},
+    {name:'Top4 - Lorelei',emoji:'🧊',level:54},{name:'Top4 - Bruno',emoji:'🥊',level:58},{name:'Top4 - Agathe',emoji:'👻',level:60},{name:'Top4 - Siegfried',emoji:'🐉',level:62},{name:'Champion Blau',emoji:'⭐',level:65}
   ]},
   { id: 'gs',  name: 'Gold / Silber',  gen: 2, gyms: [
-    {name:'Violstadt',emoji:'🌸',level:18},{name:'Azuria City',emoji:'💧',level:25},{name:'Malvenfroh',emoji:'⚡',level:30},{name:'Ecruteak City',emoji:'👻',level:35},
-    {name:'Cianwood City',emoji:'🥊',level:35},{name:'Olivine City',emoji:'⚙️',level:40},{name:'Mahogany Town',emoji:'🧊',level:42},{name:'Blackthorn City',emoji:'🐉',level:44},
-    {name:'Top4 - Will',emoji:'🧠',level:50},{name:'Top4 - Koga',emoji:'☠️',level:52},{name:'Top4 - Bruno',emoji:'🥊',level:52},{name:'Top4 - Karen',emoji:'🌑',level:55},{name:'Champion Lance',emoji:'🐉',level:58},
-    {name:'Petra',emoji:'🪨',level:60},{name:'Misty',emoji:'💧',level:60},{name:'Lt. Surge',emoji:'⚡',level:60},{name:'Erika',emoji:'🌿',level:60},{name:'Janine',emoji:'☠️',level:60},{name:'Sabrina',emoji:'🧠',level:60},{name:'Blaine',emoji:'🔥',level:60},{name:'Blue',emoji:'🌍',level:60}
+    {name:'Viola City',emoji:'🦅',level:18},{name:'Azalea City',emoji:'🐛',level:21},{name:'Dukatia City',emoji:'Normal',level:26},{name:'Teak City',emoji:'👻',level:30},
+    {name:'Anemonia City',emoji:'🥊',level:35},{name:'Oliviana City',emoji:'⚙️',level:38},{name:'Mahagonia City',emoji:'🧊',level:42},{name:'Ebenholz City',emoji:'🐉',level:44},
+    {name:'Top4 - Willi',emoji:'🧠',level:50},{name:'Top4 - Koga',emoji:'☠️',level:52},{name:'Top4 - Bruno',emoji:'🥊',level:52},{name:'Top4 - Melanie',emoji:'🌑',level:55},{name:'Champion Siegfried',emoji:'🐉',level:58},
+    {name:'Marmoria City (Rocko)',emoji:'🪨',level:60},{name:'Azuria City (Misty)',emoji:'💧',level:60},{name:'Orania City (Major Bob)',emoji:'⚡',level:60},{name:'Prismania City (Erika)',emoji:'🌿',level:60},{name:'Fuchsania City (Janina)',emoji:'☠️',level:60},{name:'Saffronia City (Sabrina)',emoji:'🧠',level:60},{name:'Seeschauminseln (Pyro)',emoji:'🔥',level:60},{name:'Vertania City (Blau)',emoji:'🌍',level:60}
   ]},
   { id: 'rs',  name: 'Rubin / Saphir', gen: 3, gyms: [
-    {name:'Petaltburg City',emoji:'Normal',level:14},{name:'Rustboro City',emoji:'🪨',level:18},{name:'Dewford Town',emoji:'🥊',level:23},{name:'Mauville City',emoji:'⚡',level:28},
-    {name:'Lavaridge Town',emoji:'🔥',level:31},{name:'Petalburg City',emoji:'💪',level:39},{name:'Fortree City',emoji:'🦅',level:41},{name:'Mossdeep City',emoji:'🧠',level:45},
-    {name:'Sootopolis City',emoji:'💧',level:47},{name:'Top4 - Sidney',emoji:'🌑',level:48},{name:'Top4 - Phoebe',emoji:'👻',level:51},{name:'Top4 - Glacia',emoji:'🧊',level:53},{name:'Top4 - Drake',emoji:'🐉',level:55},{name:'Champion Wallace',emoji:'💧',level:58}
+    {name:'Metarost City',emoji:'🪨',level:14},{name:'Fätzstadt',emoji:'🥊',level:19},{name:'Malvenfroh City',emoji:'⚡',level:24},{name:'Bad Lavastadt',emoji:'🔥',level:29},
+    {name:'Blütenburg City',emoji:'Normal',level:32},{name:'Baumhausen City',emoji:'🦅',level:36},{name:'Moosbach City',emoji:'🧠',level:42},{name:'Xeneroville',emoji:'💧',level:46},
+    {name:'Top4 - Ulrich',emoji:'🌑',level:48},{name:'Top4 - Antonia',emoji:'👻',level:51},{name:'Top4 - Frosina',emoji:'🧊',level:53},{name:'Top4 - Dragan',emoji:'🐉',level:55},{name:'Champion Troy Trumm',emoji:'⭐',level:58}
   ]},
   { id: 'dp',  name: 'Diamant / Perle', gen: 4, gyms: [
-    {name:'Oreburgh City',emoji:'🪨',level:14},{name:'Eterna City',emoji:'🌿',level:22},{name:'Veilstone City',emoji:'🥊',level:28},{name:'Pastoria City',emoji:'💧',level:34},
-    {name:'Hearthome City',emoji:'👻',level:36},{name:'Canalave City',emoji:'⚙️',level:41},{name:'Snowpoint City',emoji:'🧊',level:44},{name:'Sunyshore City',emoji:'⚡',level:47},
-    {name:'Top4 - Aaron',emoji:'🐛',level:53},{name:'Top4 - Bertha',emoji:'🌍',level:55},{name:'Top4 - Flint',emoji:'🔥',level:57},{name:'Top4 - Lucian',emoji:'🧠',level:59},{name:'Champion Cynthia',emoji:'⭐',level:62}
+    {name:'Erzelingen',emoji:'🪨',level:14},{name:'Ewigenau',emoji:'🌿',level:22},{name:'Schleiede',emoji:'🥊',level:28},{name:'Weideburg',emoji:'💧',level:34},
+    {name:'Herzhofen',emoji:'👻',level:36},{name:'Fleetburg',emoji:'⚙️',level:41},{name:'Blizzach',emoji:'🧊',level:44},{name:'Sonnewik',emoji:'⚡',level:47},
+    {name:'Top4 - Herbaro',emoji:'🐛',level:53},{name:'Top4 - Teresa',emoji:'🌍',level:55},{name:'Top4 - Ignaz',emoji:'🔥',level:57},{name:'Top4 - Lucian',emoji:'🧠',level:59},{name:'Champion Cynthia',emoji:'⭐',level:62}
   ]},
   { id: 'bw',  name: 'Schwarz / Weiß',  gen: 5, gyms: [
-    {name:'Striaton City',emoji:'🍃',level:15},{name:'Nacrene City',emoji:'Normal',level:18},{name:'Castelia City',emoji:'🐛',level:21},{name:'Nimbasa City',emoji:'⚡',level:25},
-    {name:'Driftveil City',emoji:'🌍',level:29},{name:'Mistralton City',emoji:'🦅',level:33},{name:'Icirrus City',emoji:'🧊',level:37},{name:'Opelucid City',emoji:'🐉',level:41},
-    {name:'Top4 - Shauntal',emoji:'👻',level:48},{name:'Top4 - Marshal',emoji:'🥊',level:48},{name:'Top4 - Grimsley',emoji:'🌑',level:48},{name:'Top4 - Caitlin',emoji:'🧠',level:48},{name:'Champion N / Alder',emoji:'⭐',level:52}
+    {name:'Orion City',emoji:'🍃',level:15},{name:'Septerna City',emoji:'Normal',level:18},{name:'Stratos City',emoji:'🐛',level:21},{name:'Rayono City',emoji:'⚡',level:25},
+    {name:'Marea City',emoji:'🌍',level:29},{name:'Panaero City',emoji:'🦅',level:33},{name:'Nevaio City',emoji:'🧊',level:37},{name:'Twindrake City',emoji:'🐉',level:41},
+    {name:'Top4 - Anissa',emoji:'👻',level:48},{name:'Top4 - Eugen',emoji:'🥊',level:48},{name:'Top4 - Astor',emoji:'🌑',level:48},{name:'Top4 - Kattlea',emoji:'🧠',level:48},{name:'Champion N / Lauro',emoji:'⭐',level:52}
   ]},
   { id: 'xy',  name: 'X / Y',           gen: 6, gyms: [
-    {name:'Santalune City',emoji:'🐛',level:14},{name:'Cyllage City',emoji:'🪨',level:25},{name:'Shalour City',emoji:'🥊',level:29},{name:'Coumarine City',emoji:'🌿',level:31},
-    {name:'Lumiose City',emoji:'⚡',level:35},{name:'Laverre City',emoji:'🧚',level:40},{name:'Anistar City',emoji:'🧠',level:42},{name:'Snowbelle City',emoji:'🧊',level:46},
-    {name:'Top4 - Malva',emoji:'🔥',level:50},{name:'Top4 - Siebold',emoji:'💧',level:52},{name:'Top4 - Wikstrom',emoji:'⚙️',level:52},{name:'Top4 - Drasna',emoji:'🐉',level:53},{name:'Champion Diantha',emoji:'⭐',level:55}
+    {name:'Nouvaria City',emoji:'🐛',level:14},{name:'Relievera City',emoji:'🪨',level:25},{name:'Yantara City',emoji:'🥊',level:29},{name:'Tempera City',emoji:'🌿',level:31},
+    {name:'Illumina City',emoji:'⚡',level:35},{name:'Romantia City',emoji:'🧚',level:40},{name:'Fluxia City',emoji:'🧠',level:42},{name:'Fractalia City',emoji:'🧊',level:46},
+    {name:'Top4 - Pachira',emoji:'🔥',level:50},{name:'Top4 - Narcisse',emoji:'💧',level:52},{name:'Top4 - Thymelot',emoji:'⚙️',level:52},{name:'Top4 - Dracena',emoji:'🐉',level:53},{name:'Champion Diantha',emoji:'⭐',level:55}
   ]},
   { id: 'sm',  name: 'Sonne / Mond',    gen: 7, gyms: [
-    {name:'Ilima Trial',emoji:'Normal',level:12},{name:'Lana Trial',emoji:'💧',level:22},{name:'Kiawe Trial',emoji:'🔥',level:26},{name:'Mallow Trial',emoji:'🌿',level:29},
-    {name:'Sophocles Trial',emoji:'⚡',level:33},{name:'Acerola Trial',emoji:'👻',level:37},{name:'Mina Trial',emoji:'🧚',level:49},
-    {name:'Kahuna Hala',emoji:'🥊',level:19},{name:'Kahuna Olivia',emoji:'🪨',level:31},{name:'Kahuna Nanu',emoji:'🌑',level:41},{name:'Kahuna Hapu',emoji:'🌍',level:53},
-    {name:'Elite4 Hala',emoji:'🥊',level:54},{name:'Elite4 Olivia',emoji:'🪨',level:55},{name:'Elite4 Acerola',emoji:'👻',level:55},{name:'Elite4 Kahili',emoji:'🦅',level:56},{name:'Champion',emoji:'⭐',level:58}
+    {name:'Mele-Mele: Elima-Prüfung',emoji:'Normal',level:12},{name:'Akala: Tracy-Prüfung',emoji:'💧',level:22},{name:'Akala: Kiawe-Prüfung',emoji:'🔥',level:26},{name:'Akala: Maho-Prüfung',emoji:'🌿',level:29},
+    {name:'Ula-Ula: Chrys-Prüfung',emoji:'⚡',level:33},{name:'Ula-Ula: Lola-Prüfung',emoji:'👻',level:37},{name:'Poni: Matsurika-Prüfung',emoji:'🧚',level:49},
+    {name:'Kahuna Hala (Mele-Mele)',emoji:'🥊',level:19},{name:'Kahuna Mayla (Akala)',emoji:'🪨',level:31},{name:'Kahuna Yasu (Ula-Ula)',emoji:'🌑',level:41},{name:'Kahuna Hapu\'u (Poni)',emoji:'🌍',level:53},
+    {name:'Top4 Hala',emoji:'🥊',level:54},{name:'Top4 Mayla',emoji:'🪨',level:55},{name:'Top4 Lola',emoji:'👻',level:55},{name:'Top4 Kahili',emoji:'🦅',level:56},{name:'Champion (Kukui)',emoji:'⭐',level:58}
   ]},
   { id: 'swsh', name: 'Schwert / Schild', gen: 8, gyms: [
-    {name:'Turffield',emoji:'🌿',level:19},{name:'Hulbury',emoji:'💧',level:24},{name:'Motostoke',emoji:'🔥',level:25},{name:'Stow-on-Side (Kampf)',emoji:'🥊',level:34},
-    {name:'Stow-on-Side (Geist)',emoji:'👻',level:34},{name:'Ballonlea',emoji:'🧚',level:36},{name:'Circhester (Gestein)',emoji:'🪨',level:40},{name:'Circhester (Eis)',emoji:'🧊',level:40},
-    {name:'Spikemuth',emoji:'🌑',level:44},{name:'Hammerlocke',emoji:'🐉',level:48},
-    {name:'Top4 - Bede',emoji:'🧚',level:52},{name:'Top4 - Marnie',emoji:'🌑',level:52},{name:'Top4 - Nessa',emoji:'💧',level:52},{name:'Top4 - Bea/Allister',emoji:'🥊',level:52},{name:'Champion Leon',emoji:'⭐',level:62}
+    {name:'Turffield',emoji:'🌿',level:19},{name:'Keelton',emoji:'💧',level:24},{name:'Engine City',emoji:'🔥',level:25},{name:'Passbeck (Kampf)',emoji:'🥊',level:34},
+    {name:'Passbeck (Geist)',emoji:'👻',level:34},{name:'Fairballey',emoji:'🧚',level:36},{name:'Circhester (Gestein)',emoji:'🪨',level:40},{name:'Circhester (Eis)',emoji:'🧊',level:40},
+    {name:'Spikeford',emoji:'🌑',level:44},{name:'Claw City',emoji:'🐉',level:48},
+    {name:'Top4 - Bede',emoji:'🧚',level:52},{name:'Top4 - Marnie',emoji:'🌑',level:52},{name:'Top4 - Nessa',emoji:'💧',level:52},{name:'Top4 - Bea/Allister',emoji:'🥊',level:52},{name:'Champion Delion',emoji:'⭐',level:62}
   ]},
   { id: 'sv',  name: 'Karmesin / Purpur', gen: 9, gyms: [
-    {name:'Cortondo',emoji:'🐛',level:14},{name:'Artazon',emoji:'🌿',level:17},{name:'Levincia',emoji:'⚡',level:23},{name:'Cascarrafa',emoji:'💧',level:29},
-    {name:'Medali',emoji:'Normal',level:35},{name:'Montenevera',emoji:'👻',level:41},{name:'Alfornada',emoji:'🧠',level:44},{name:'Glaseado',emoji:'🧊',level:48},
-    {name:'Top4 - Rika',emoji:'🌍',level:57},{name:'Top4 - Poppy',emoji:'⚙️',level:58},{name:'Top4 - Larry',emoji:'🦅',level:59},{name:'Top4 - Hassel',emoji:'🐉',level:60},{name:'Champion Geeta',emoji:'⭐',level:62}
+    {name:'Moldrid',emoji:'🐛',level:14},{name:'Bolardin',emoji:'🌿',level:17},{name:'Fermanca City',emoji:'⚡',level:23},{name:'Garrafosa City',emoji:'💧',level:29},
+    {name:'Mesclarra',emoji:'Normal',level:35},{name:'Frigomonta',emoji:'👻',level:41},{name:'Asarilla',emoji:'🧠',level:44},{name:'Montanata',emoji:'🧊',level:48},
+    {name:'Top4 - Cay',emoji:'🌍',level:57},{name:'Top4 - Poppy',emoji:'⚙️',level:58},{name:'Top4 - Aoki',emoji:'🦅',level:59},{name:'Top4 - Sinius',emoji:'🐉',level:60},{name:'Champion Sagaria',emoji:'⭐',level:62}
   ]},
 ];
 
@@ -1333,7 +1555,61 @@ let state = {
 
 let searchDebounce = null;
 let selectedPokemon = null;
-let editingSlot = null; // {playerId, slotIdx}
+let editingTarget = null; // {pi, loc:'team'|'box', idx}  idx=null when adding new box mon
+let linkPickerSource = null; // {pi, loc, idx}
+let boxCollapsed = {}; // playerId -> bool (not persisted, UI-only)
+
+// ============================================================
+//  IDS & SOULLINK HELPERS
+// ============================================================
+
+function makeUid() {
+  return 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
+}
+
+// Iterate every pokemon in the whole run, calling fn(poke, pi, loc, idx)
+function forEachPokemon(fn) {
+  state.players.forEach((player, pi) => {
+    player.team.forEach((poke, idx) => { if (poke) fn(poke, pi, 'team', idx); });
+    player.box.forEach((poke, idx) => { fn(poke, pi, 'box', idx); });
+    player.deadBox.forEach((poke, idx) => { fn(poke, pi, 'deadBox', idx); });
+  });
+}
+
+function getPokeAt(pi, loc, idx) {
+  const player = state.players[pi];
+  if (!player) return null;
+  if (loc === 'team') return player.team[idx] || null;
+  if (loc === 'box') return player.box[idx] || null;
+  if (loc === 'deadBox') return player.deadBox[idx] || null;
+  return null;
+}
+
+// Find all OTHER pokemon (excluding the one at pi/loc/idx) sharing the same linkId
+function getLinkPartners(pi, loc, idx) {
+  const self = getPokeAt(pi, loc, idx);
+  if (!self || !self.linkId) return [];
+  const partners = [];
+  forEachPokemon((poke, ppi, ploc, pidx) => {
+    if (poke.linkId === self.linkId && !(ppi === pi && ploc === loc && pidx === idx)) {
+      partners.push({ poke, pi: ppi, loc: ploc, idx: pidx });
+    }
+  });
+  return partners;
+}
+
+function colorForLink(linkId) {
+  let hash = 0;
+  for (let i = 0; i < linkId.length; i++) hash = (hash * 31 + linkId.charCodeAt(i)) >>> 0;
+  const hue = hash % 360;
+  return `hsl(${hue}, 70%, 58%)`;
+}
+
+function linkBadge(poke) {
+  if (!poke.linkId) return '';
+  const color = colorForLink(poke.linkId);
+  return `<div class="link-badge" style="background:${color}" title="🔗 Soullink aktiv">🔗</div>`;
+}
 
 // ============================================================
 //  INIT
@@ -1345,6 +1621,7 @@ function init() {
   renderPlayerCountSelect();
   renderGyms();
   renderPlayers();
+  renderLinks();
   updateTotalDeaths();
 
   document.getElementById('runName').value = state.runName;
@@ -1362,7 +1639,7 @@ function init() {
   });
 
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { closeModal(); hideContextMenu(); }
+    if (e.key === 'Escape') { closeModal(); hideContextMenu(); closeLinkPicker(); }
   });
 }
 
@@ -1411,6 +1688,7 @@ function createPlayer(num) {
     id: Date.now() + Math.random(),
     name: `Spieler ${num}`,
     team: new Array(6).fill(null),
+    box: [],
     deadBox: []
   };
 }
@@ -1456,13 +1734,33 @@ function renderPlayers() {
     if (inp) inp.addEventListener('input', e => {
       state.players[pi].name = e.target.value;
       saveData();
+      renderLinks();
     });
   });
+
+  renderLinks();
 }
 
 function renderPlayerCard(player, pi) {
   const deaths = player.deadBox.length;
   const teamHTML = player.team.map((poke, si) => renderPokeSlot(poke, pi, si)).join('');
+  const collapsed = !!boxCollapsed[player.id];
+  const boxHTML = `
+    <div class="box-section">
+      <div class="box-header" onclick="toggleBox(${pi})">
+        <span class="box-title">📦 Box (${player.box.length})</span>
+        <span class="box-toggle">${collapsed ? '▸' : '▾'}</span>
+      </div>
+      <div class="box-body ${collapsed ? 'hidden' : ''}">
+        <div class="box-grid">
+          ${player.box.map((poke, bi) => renderBoxSlot(poke, pi, bi)).join('')}
+          <div class="box-slot box-add" onclick="event.stopPropagation();openModal(${pi},'box',null)">
+            <span class="slot-add-icon">＋</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
   const deadHTML = player.deadBox.length > 0 ? `
     <div class="dead-box">
       <div class="dead-box-title">💀 Friedhof (${player.deadBox.length})</div>
@@ -1494,7 +1792,29 @@ function renderPlayerCard(player, pi) {
         </div>
       </div>
       <div class="team-grid">${teamHTML}</div>
+      ${boxHTML}
       ${deadHTML}
+    </div>
+  `;
+}
+
+function toggleBox(pi) {
+  const player = state.players[pi];
+  boxCollapsed[player.id] = !boxCollapsed[player.id];
+  renderPlayers();
+}
+
+function renderBoxSlot(poke, pi, bi) {
+  const typeBadges = poke.types.map(t =>
+    `<span class="type-badge t-${t}">${TYPE_DE[t] || t}</span>`
+  ).join('');
+  return `
+    <div class="box-slot ${poke.dead ? 'dead' : ''}" onclick="openBoxContextMenu(event, ${pi}, ${bi})" data-pi="${pi}" data-bi="${bi}">
+      ${linkBadge(poke)}
+      <img class="poke-sprite" src="${poke.sprite}" alt="${poke.species}" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png'" />
+      ${poke.nickname ? `<div class="poke-nickname">"${escHtml(poke.nickname)}"</div>` : ''}
+      <div class="poke-species">${escHtml(poke.species)}</div>
+      <div class="poke-types">${typeBadges}</div>
     </div>
   `;
 }
@@ -1515,6 +1835,7 @@ function renderPokeSlot(poke, pi, si) {
 
   return `
     <div class="poke-slot ${poke.dead ? 'dead' : ''}" onclick="openContextMenu(event, ${pi}, ${si})" data-pi="${pi}" data-si="${si}">
+      ${linkBadge(poke)}
       <img class="poke-sprite" src="${poke.sprite}" alt="${poke.species}" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png'" />
       ${poke.nickname ? `<div class="poke-nickname">"${escHtml(poke.nickname)}"</div>` : ''}
       <div class="poke-species">${escHtml(poke.species)}</div>
@@ -1537,14 +1858,16 @@ function openContextMenu(event, pi, si) {
 
   if (poke) {
     if (!poke.dead) {
-      items += `<button class="context-item danger" onclick="markDead(${pi},${si});hideContextMenu()"><span class="ci-icon">💀</span> Als Tod markieren</button>`;
+      items += `<button class="context-item danger" onclick="markDead(${pi},'team',${si});hideContextMenu()"><span class="ci-icon">💀</span> Als Tod markieren</button>`;
+      items += `<button class="context-item" onclick="moveToBox(${pi},${si});hideContextMenu()"><span class="ci-icon">📦</span> In Box verschieben</button>`;
     } else {
-      items += `<button class="context-item" onclick="revivePoke(${pi},${si});hideContextMenu()"><span class="ci-icon">✨</span> Wiederbeleben</button>`;
+      items += `<button class="context-item" onclick="revivePoke(${pi},'team',${si});hideContextMenu()"><span class="ci-icon">✨</span> Wiederbeleben</button>`;
     }
-    items += `<button class="context-item" onclick="openModal(${pi},${si});hideContextMenu()"><span class="ci-icon">✏️</span> Pokémon ändern</button>`;
-    items += `<button class="context-item danger" onclick="removePoke(${pi},${si});hideContextMenu()"><span class="ci-icon">🗑️</span> Entfernen</button>`;
+    items += linkMenuItems(pi, 'team', si);
+    items += `<button class="context-item" onclick="openModal(${pi},'team',${si});hideContextMenu()"><span class="ci-icon">✏️</span> Pokémon ändern</button>`;
+    items += `<button class="context-item danger" onclick="removePoke(${pi},'team',${si});hideContextMenu()"><span class="ci-icon">🗑️</span> Entfernen</button>`;
   } else {
-    items += `<button class="context-item" onclick="openModal(${pi},${si});hideContextMenu()"><span class="ci-icon">➕</span> Pokémon hinzufügen</button>`;
+    items += `<button class="context-item" onclick="openModal(${pi},'team',${si});hideContextMenu()"><span class="ci-icon">➕</span> Pokémon hinzufügen</button>`;
   }
 
   const header = poke
@@ -1567,6 +1890,52 @@ function openContextMenu(event, pi, si) {
   menu.style.top = y + 'px';
 }
 
+function openBoxContextMenu(event, pi, bi) {
+  event.stopPropagation();
+  const menu = document.getElementById('contextMenu');
+  const poke = state.players[pi]?.box[bi];
+  if (!poke) return;
+
+  let items = '';
+  if (!poke.dead) {
+    items += `<button class="context-item danger" onclick="markDead(${pi},'box',${bi});hideContextMenu()"><span class="ci-icon">💀</span> Als Tod markieren</button>`;
+    items += `<button class="context-item" onclick="moveToTeam(${pi},${bi});hideContextMenu()"><span class="ci-icon">⬆️</span> Ins Team verschieben</button>`;
+  } else {
+    items += `<button class="context-item" onclick="revivePoke(${pi},'box',${bi});hideContextMenu()"><span class="ci-icon">✨</span> Wiederbeleben</button>`;
+  }
+  items += linkMenuItems(pi, 'box', bi);
+  items += `<button class="context-item" onclick="openModal(${pi},'box',${bi});hideContextMenu()"><span class="ci-icon">✏️</span> Pokémon ändern</button>`;
+  items += `<button class="context-item danger" onclick="removePoke(${pi},'box',${bi});hideContextMenu()"><span class="ci-icon">🗑️</span> Entfernen</button>`;
+
+  const header = `<div class="context-menu-header">
+       <img src="${poke.sprite}" style="width:24px;height:24px;image-rendering:pixelated;object-fit:contain;" />
+       ${escHtml(poke.nickname || poke.species)}
+     </div>`;
+
+  menu.innerHTML = header + items;
+  menu.classList.remove('hidden');
+
+  const rect = event.target.closest('.box-slot').getBoundingClientRect();
+  let x = rect.right + 8;
+  let y = rect.top;
+  if (x + 190 > window.innerWidth) x = rect.left - 190;
+  if (y + menu.offsetHeight > window.innerHeight) y = window.innerHeight - menu.offsetHeight - 8;
+  menu.style.left = x + 'px';
+  menu.style.top = y + 'px';
+}
+
+function linkMenuItems(pi, loc, idx) {
+  const poke = getPokeAt(pi, loc, idx);
+  if (!poke) return '';
+  if (poke.linkId) {
+    const partners = getLinkPartners(pi, loc, idx);
+    const names = partners.map(p => `${state.players[p.pi].name}: ${p.poke.nickname || p.poke.species}`).join(', ') || '?';
+    return `<button class="context-item" onclick="openLinkPicker(${pi},'${loc}',${idx});hideContextMenu()"><span class="ci-icon">🔗</span> Verlinkt: ${escHtml(names)}</button>
+            <button class="context-item danger" onclick="unlinkPokemon(${pi},'${loc}',${idx});hideContextMenu()"><span class="ci-icon">✂️</span> Link entfernen</button>`;
+  }
+  return `<button class="context-item" onclick="openLinkPicker(${pi},'${loc}',${idx});hideContextMenu()"><span class="ci-icon">🔗</span> Soullink verknüpfen</button>`;
+}
+
 function hideContextMenu() {
   document.getElementById('contextMenu').classList.add('hidden');
 }
@@ -1575,41 +1944,209 @@ function hideContextMenu() {
 //  POKEMON ACTIONS
 // ============================================================
 
-function markDead(pi, si) {
+function killPokemonAt(pi, loc, idx, opts) {
+  opts = opts || {};
   const player = state.players[pi];
-  const poke = player.team[si];
-  if (!poke) return;
+  if (!player) return;
+  const poke = loc === 'team' ? player.team[idx] : player.box[idx];
+  if (!poke || poke.dead) return;
+
   poke.dead = true;
-  player.deadBox.push({...poke});
-  player.team[si] = null;
+  player.deadBox.push({ ...poke });
+  if (loc === 'team') player.team[idx] = null;
+  else player.box.splice(idx, 1);
+
+  if (!opts.silent) showToast(`💀 ${poke.nickname || poke.species} ist gestorben`, 'error');
+
+  // Soullink: everyone sharing the same linkId dies too
+  if (poke.linkId && !opts.skipCascade) {
+    const partners = [];
+    forEachPokemon((p2, p2i, p2loc, p2idx) => {
+      if (p2.linkId === poke.linkId && !p2.dead) partners.push({ pi: p2i, loc: p2loc, idx: p2idx, poke: p2 });
+    });
+    partners.forEach(p => {
+      const partnerName = p.poke.nickname || p.poke.species;
+      const partnerPlayer = state.players[p.pi].name;
+      killPokemonAt(p.pi, p.loc, p.idx, { skipCascade: true, silent: true });
+      showToast(`🔗💀 Soullink: ${partnerName} (${partnerPlayer}) ist mitgestorben`, 'error');
+    });
+  }
+}
+
+function markDead(pi, loc, idx) {
+  killPokemonAt(pi, loc, idx);
   renderPlayers();
   updateTotalDeaths();
   saveData();
-  showToast(`💀 ${poke.nickname || poke.species} ist gestorben`, 'error');
 }
 
-function revivePoke(pi, si) {
-  const poke = state.players[pi].team[si];
+function revivePoke(pi, loc, idx) {
+  const poke = getPokeAt(pi, loc, idx);
   if (!poke) return;
   poke.dead = false;
   renderPlayers();
   saveData();
 }
 
-function removePoke(pi, si) {
-  state.players[pi].team[si] = null;
+function removePoke(pi, loc, idx) {
+  const player = state.players[pi];
+  if (loc === 'team') player.team[idx] = null;
+  else player.box.splice(idx, 1);
   renderPlayers();
   saveData();
+}
+
+// ============================================================
+//  BOX MANAGEMENT
+// ============================================================
+
+function moveToBox(pi, si) {
+  const player = state.players[pi];
+  const poke = player.team[si];
+  if (!poke) return;
+  player.team[si] = null;
+  player.box.push(poke);
+  renderPlayers();
+  saveData();
+  showToast(`📦 ${poke.nickname || poke.species} in die Box verschoben`);
+}
+
+function moveToTeam(pi, bi) {
+  const player = state.players[pi];
+  const poke = player.box[bi];
+  if (!poke) return;
+  const emptyIdx = player.team.findIndex(s => s === null);
+  if (emptyIdx === -1) {
+    showToast('❗ Team ist voll — erst einen Platz freimachen', 'error');
+    return;
+  }
+  player.box.splice(bi, 1);
+  player.team[emptyIdx] = poke;
+  renderPlayers();
+  saveData();
+  showToast(`⬆️ ${poke.nickname || poke.species} ins Team verschoben`);
+}
+
+// ============================================================
+//  SOULLINK
+// ============================================================
+
+function openLinkPicker(pi, loc, idx) {
+  linkPickerSource = { pi, loc, idx };
+  const poke = getPokeAt(pi, loc, idx);
+  if (!poke) return;
+
+  const listEl = document.getElementById('linkPickerList');
+  let html = '';
+  state.players.slice(0, state.playerCount).forEach((player, ppi) => {
+    if (ppi === pi) return;
+    const mons = [
+      ...player.team.map((p, i) => p ? { p, loc: 'team', idx: i } : null).filter(Boolean),
+      ...player.box.map((p, i) => ({ p, loc: 'box', idx: i }))
+    ];
+    if (mons.length === 0) return;
+    html += `<div class="link-picker-group"><div class="link-picker-player">${escHtml(player.name)}</div>`;
+    mons.forEach(m => {
+      const isPartner = poke.linkId && m.p.linkId === poke.linkId;
+      html += `<div class="link-picker-item ${isPartner ? 'active' : ''}" onclick="selectLinkTarget(${ppi}, '${m.loc}', ${m.idx})">
+        <img src="${m.p.sprite}" onerror="this.style.display='none'" />
+        <span>${escHtml(m.p.nickname || m.p.species)}</span>
+        ${m.p.linkId ? `<span class="link-picker-tag" style="background:${colorForLink(m.p.linkId)}">🔗</span>` : ''}
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  if (!html) html = `<div style="padding:12px;color:var(--text3);font-size:13px;">Keine anderen Spieler-Pokémon verfügbar.</div>`;
+
+  listEl.innerHTML = html;
+  document.getElementById('linkPickerTitle').textContent = `🔗 ${poke.nickname || poke.species} verlinken`;
+  document.getElementById('linkPickerOverlay').classList.remove('hidden');
+}
+
+function closeLinkPicker() {
+  const el = document.getElementById('linkPickerOverlay');
+  if (el) el.classList.add('hidden');
+  linkPickerSource = null;
+}
+
+function selectLinkTarget(targetPi, targetLoc, targetIdx) {
+  if (!linkPickerSource) return;
+  const { pi, loc, idx } = linkPickerSource;
+  const a = getPokeAt(pi, loc, idx);
+  const b = getPokeAt(targetPi, targetLoc, targetIdx);
+  if (!a || !b) { closeLinkPicker(); return; }
+
+  const groupId = a.linkId || b.linkId || makeUid();
+  a.linkId = groupId;
+  b.linkId = groupId;
+
+  closeLinkPicker();
+  renderPlayers();
+  saveData();
+  showToast(`🔗 ${a.nickname || a.species} & ${b.nickname || b.species} verlinkt!`);
+}
+
+function unlinkPokemon(pi, loc, idx) {
+  const poke = getPokeAt(pi, loc, idx);
+  if (!poke) return;
+  poke.linkId = null;
+  renderPlayers();
+  saveData();
+  showToast('✂️ Link entfernt');
+}
+
+function unlinkGroup(linkId) {
+  forEachPokemon(poke => { if (poke.linkId === linkId) poke.linkId = null; });
+  renderPlayers();
+  saveData();
+  showToast('✂️ Soullink-Gruppe getrennt');
+}
+
+function renderLinks() {
+  const container = document.getElementById('linksSection');
+  if (!container) return;
+
+  const groups = {};
+  forEachPokemon((poke, pi, loc, idx) => {
+    if (!poke.linkId) return;
+    (groups[poke.linkId] = groups[poke.linkId] || []).push({ poke, pi, loc, idx });
+  });
+
+  const linkIds = Object.keys(groups);
+  if (linkIds.length === 0) {
+    container.innerHTML = `<div class="links-empty">Noch keine Soullinks gesetzt. Öffne das Kontextmenü eines Pokémon (🔗-Symbol) um es mit dem Pokémon eines anderen Spielers zu verlinken.</div>`;
+    return;
+  }
+
+  container.innerHTML = linkIds.map(id => {
+    const members = groups[id];
+    const color = colorForLink(id);
+    const allDead = members.every(m => m.poke.dead);
+    return `
+      <div class="link-group ${allDead ? 'dead' : ''}" style="border-left-color:${color}">
+        <div class="link-group-members">
+          ${members.map(m => `
+            <div class="link-member">
+              <img src="${m.poke.sprite}" onerror="this.style.display='none'" />
+              <span class="link-member-player">${escHtml(state.players[m.pi]?.name || '?')}</span>
+              <span class="link-member-name">${escHtml(m.poke.nickname || m.poke.species)}${m.poke.dead ? ' 💀' : ''}</span>
+            </div>
+          `).join('<span class="link-connector">🔗</span>')}
+        </div>
+        <button class="btn btn-icon btn-sm" title="Gruppe trennen" onclick="unlinkGroup('${id}')">✂️</button>
+      </div>
+    `;
+  }).join('');
 }
 
 // ============================================================
 //  MODAL
 // ============================================================
 
-function openModal(pi, si) {
-  editingSlot = { pi, si };
+function openModal(pi, loc, idx) {
+  editingTarget = { pi, loc, idx };
   selectedPokemon = null;
-  const existing = state.players[pi].team[si];
+  const existing = (idx === null || idx === undefined) ? null : getPokeAt(pi, loc, idx);
 
   document.getElementById('pokeSearch').value = '';
   document.getElementById('pokeNickname').value = existing?.nickname || '';
@@ -1632,7 +2169,7 @@ function openModal(pi, si) {
 
 function closeModal() {
   document.getElementById('modalOverlay').classList.add('hidden');
-  editingSlot = null;
+  editingTarget = null;
   selectedPokemon = null;
 }
 
@@ -1797,15 +2334,26 @@ function confirmAddPokemon() {
 
   const nickname = document.getElementById('pokeNickname').value.trim();
   const location = document.getElementById('pokeLocation').value.trim();
+  const { pi, loc, idx } = editingTarget;
+  const player = state.players[pi];
+  const existing = (idx === null || idx === undefined) ? null : getPokeAt(pi, loc, idx);
 
   const poke = {
     ...selectedPokemon,
     nickname,
     location,
-    dead: false
+    dead: existing ? existing.dead : false,
+    uid: existing ? existing.uid : makeUid(),
+    linkId: existing ? (existing.linkId || null) : null
   };
 
-  state.players[editingSlot.pi].team[editingSlot.si] = poke;
+  if (loc === 'team') {
+    player.team[idx] = poke;
+  } else if (loc === 'box') {
+    if (idx === null || idx === undefined) player.box.push(poke);
+    else player.box[idx] = poke;
+  }
+
   closeModal();
   renderPlayers();
   saveData();
@@ -1853,6 +2401,8 @@ function loadData() {
   } catch(e) {
     state.players = [1,2,3].map(n => createPlayer(n));
   }
+  // Migration: ensure every player has a box array (older saves may not have one)
+  state.players.forEach(p => { if (!Array.isArray(p.box)) p.box = []; if (!Array.isArray(p.deadBox)) p.deadBox = []; });
 }
 
 function resetAll() {
@@ -1864,6 +2414,7 @@ function resetAll() {
   renderPlayerCountSelect();
   renderGyms();
   renderPlayers();
+  renderLinks();
   updateTotalDeaths();
   showToast('🔄 Alles zurückgesetzt!');
 }
