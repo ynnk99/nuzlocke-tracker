@@ -271,9 +271,18 @@
     .gym-badge:not(.completed) .badge-icon { filter: grayscale(100%) brightness(0.4); }
 
     .badge-icon {
-      font-size: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
       transition: transform 0.2s;
       line-height: 1;
+    }
+    .badge-icon img, .badge-icon svg {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
     .gym-badge.completed .badge-icon { transform: scale(1.1); }
 
@@ -1121,6 +1130,7 @@
   </div>
 </div>
 
+<script src="games-data.js"></script>
 <script>
 // ============================================================
 //  GERMAN → ENGLISH POKEMON NAME LOOKUP (Gen 1-9)
@@ -1474,58 +1484,9 @@ const DE_TO_EN = {
 
 // ============================================================
 //  DATA & CONFIG
+//  (GAMES-Array liegt jetzt in games-data.js, gemeinsam
+//   genutzt von index.html und obs.html)
 // ============================================================
-
-const GAMES = [
-  { id: 'rb',  name: 'Rot / Blau',     gen: 1, gyms: [
-    {name:'Marmoria City',emoji:'🪨',level:12},{name:'Azuria City',emoji:'💧',level:21},{name:'Orania City',emoji:'⚡',level:24},{name:'Prismania City',emoji:'🌿',level:29},
-    {name:'Fuchsania City',emoji:'☠️',level:43},{name:'Saffronia City',emoji:'🧠',level:43},{name:'Zinnoberinsel',emoji:'🔥',level:47},{name:'Vertania City',emoji:'🌍',level:50},
-    {name:'Top4 - Lorelei',emoji:'🧊',level:54},{name:'Top4 - Bruno',emoji:'🥊',level:58},{name:'Top4 - Agathe',emoji:'👻',level:60},{name:'Top4 - Siegfried',emoji:'🐉',level:62},{name:'Champion Blau',emoji:'⭐',level:65}
-  ]},
-  { id: 'gs',  name: 'Gold / Silber',  gen: 2, gyms: [
-    {name:'Viola City',emoji:'🦅',level:18},{name:'Azalea City',emoji:'🐛',level:21},{name:'Dukatia City',emoji:'Normal',level:26},{name:'Teak City',emoji:'👻',level:30},
-    {name:'Anemonia City',emoji:'🥊',level:35},{name:'Oliviana City',emoji:'⚙️',level:38},{name:'Mahagonia City',emoji:'🧊',level:42},{name:'Ebenholz City',emoji:'🐉',level:44},
-    {name:'Top4 - Willi',emoji:'🧠',level:50},{name:'Top4 - Koga',emoji:'☠️',level:52},{name:'Top4 - Bruno',emoji:'🥊',level:52},{name:'Top4 - Melanie',emoji:'🌑',level:55},{name:'Champion Siegfried',emoji:'🐉',level:58},
-    {name:'Marmoria City (Rocko)',emoji:'🪨',level:60},{name:'Azuria City (Misty)',emoji:'💧',level:60},{name:'Orania City (Major Bob)',emoji:'⚡',level:60},{name:'Prismania City (Erika)',emoji:'🌿',level:60},{name:'Fuchsania City (Janina)',emoji:'☠️',level:60},{name:'Saffronia City (Sabrina)',emoji:'🧠',level:60},{name:'Seeschauminseln (Pyro)',emoji:'🔥',level:60},{name:'Vertania City (Blau)',emoji:'🌍',level:60}
-  ]},
-  { id: 'rs',  name: 'Rubin / Saphir', gen: 3, gyms: [
-    {name:'Metarost City',emoji:'🪨',level:14},{name:'Faustauhaven',emoji:'🥊',level:19},{name:'Malvenfroh City',emoji:'⚡',level:24},{name:'Bad Lavastadt',emoji:'🔥',level:29},
-    {name:'Blütenburg City',emoji:'Normal',level:32},{name:'Baumhausen City',emoji:'🦅',level:36},{name:'Moosbach City',emoji:'🧠',level:42},{name:'Xeneroville',emoji:'💧',level:46},
-    {name:'Top4 - Ulrich',emoji:'🌑',level:48},{name:'Top4 - Antonia',emoji:'👻',level:51},{name:'Top4 - Frosina',emoji:'🧊',level:53},{name:'Top4 - Dragan',emoji:'🐉',level:55},{name:'Champion Troy Trumm',emoji:'⭐',level:58}
-  ]},
-  { id: 'dp',  name: 'Diamant / Perle', gen: 4, gyms: [
-    {name:'Erzelingen',emoji:'🪨',level:14},{name:'Ewigenau',emoji:'🌿',level:22},{name:'Schleiede',emoji:'🥊',level:28},{name:'Weideburg',emoji:'💧',level:34},
-    {name:'Herzhofen',emoji:'👻',level:36},{name:'Fleetburg',emoji:'⚙️',level:41},{name:'Blizzach',emoji:'🧊',level:44},{name:'Sonnewik',emoji:'⚡',level:47},
-    {name:'Top4 - Herbaro',emoji:'🐛',level:53},{name:'Top4 - Teresa',emoji:'🌍',level:55},{name:'Top4 - Ignaz',emoji:'🔥',level:57},{name:'Top4 - Lucian',emoji:'🧠',level:59},{name:'Champion Cynthia',emoji:'⭐',level:62}
-  ]},
-  { id: 'bw',  name: 'Schwarz / Weiß',  gen: 5, gyms: [
-    {name:'Orion City',emoji:'🍃',level:15},{name:'Septerna City',emoji:'Normal',level:18},{name:'Stratos City',emoji:'🐛',level:21},{name:'Rayono City',emoji:'⚡',level:25},
-    {name:'Marea City',emoji:'🌍',level:29},{name:'Panaero City',emoji:'🦅',level:33},{name:'Nevaio City',emoji:'🧊',level:37},{name:'Twindrake City',emoji:'🐉',level:41},
-    {name:'Top4 - Anissa',emoji:'👻',level:48},{name:'Top4 - Eugen',emoji:'🥊',level:48},{name:'Top4 - Astor',emoji:'🌑',level:48},{name:'Top4 - Kattlea',emoji:'🧠',level:48},{name:'Champion N / Lauro',emoji:'⭐',level:52}
-  ]},
-  { id: 'xy',  name: 'X / Y',           gen: 6, gyms: [
-    {name:'Nouvaria City',emoji:'🐛',level:14},{name:'Relievera City',emoji:'🪨',level:25},{name:'Yantara City',emoji:'🥊',level:29},{name:'Tempera City',emoji:'🌿',level:31},
-    {name:'Illumina City',emoji:'⚡',level:35},{name:'Romantia City',emoji:'🧚',level:40},{name:'Fluxia City',emoji:'🧠',level:42},{name:'Fractalia City',emoji:'🧊',level:46},
-    {name:'Top4 - Pachira',emoji:'🔥',level:50},{name:'Top4 - Narcisse',emoji:'💧',level:52},{name:'Top4 - Thymelot',emoji:'⚙️',level:52},{name:'Top4 - Dracena',emoji:'🐉',level:53},{name:'Champion Diantha',emoji:'⭐',level:55}
-  ]},
-  { id: 'sm',  name: 'Sonne / Mond',    gen: 7, gyms: [
-    {name:'Mele-Mele: Elima-Prüfung',emoji:'Normal',level:12},{name:'Akala: Tracy-Prüfung',emoji:'💧',level:22},{name:'Akala: Kiawe-Prüfung',emoji:'🔥',level:26},{name:'Akala: Maho-Prüfung',emoji:'🌿',level:29},
-    {name:'Ula-Ula: Chrys-Prüfung',emoji:'⚡',level:33},{name:'Ula-Ula: Lola-Prüfung',emoji:'👻',level:37},{name:'Poni: Matsurika-Prüfung',emoji:'🧚',level:49},
-    {name:'Kahuna Hala (Mele-Mele)',emoji:'🥊',level:19},{name:'Kahuna Mayla (Akala)',emoji:'🪨',level:31},{name:'Kahuna Yasu (Ula-Ula)',emoji:'🌑',level:41},{name:'Kahuna Hapu\'u (Poni)',emoji:'🌍',level:53},
-    {name:'Top4 Hala',emoji:'🥊',level:54},{name:'Top4 Mayla',emoji:'🪨',level:55},{name:'Top4 Lola',emoji:'👻',level:55},{name:'Top4 Kahili',emoji:'🦅',level:56},{name:'Champion (Kukui)',emoji:'⭐',level:58}
-  ]},
-  { id: 'swsh', name: 'Schwert / Schild', gen: 8, gyms: [
-    {name:'Turffield',emoji:'🌿',level:19},{name:'Keelton',emoji:'💧',level:24},{name:'Engine City',emoji:'🔥',level:25},{name:'Passbeck (Kampf)',emoji:'🥊',level:34},
-    {name:'Passbeck (Geist)',emoji:'👻',level:34},{name:'Fairballey',emoji:'🧚',level:36},{name:'Circhester (Gestein)',emoji:'🪨',level:40},{name:'Circhester (Eis)',emoji:'🧊',level:40},
-    {name:'Spikeford',emoji:'🌑',level:44},{name:'Claw City',emoji:'🐉',level:48},
-    {name:'Top4 - Bede',emoji:'🧚',level:52},{name:'Top4 - Marnie',emoji:'🌑',level:52},{name:'Top4 - Nessa',emoji:'💧',level:52},{name:'Top4 - Bea/Allister',emoji:'🥊',level:52},{name:'Champion Delion',emoji:'⭐',level:62}
-  ]},
-  { id: 'sv',  name: 'Karmesin / Purpur', gen: 9, gyms: [
-    {name:'Moldrid',emoji:'🐛',level:14},{name:'Bolardin',emoji:'🌿',level:17},{name:'Fermanca City',emoji:'⚡',level:23},{name:'Garrafosa City',emoji:'💧',level:29},
-    {name:'Mesclarra',emoji:'Normal',level:35},{name:'Frigomonta',emoji:'👻',level:41},{name:'Asarilla',emoji:'🧠',level:44},{name:'Montanata',emoji:'🧊',level:48},
-    {name:'Top4 - Cay',emoji:'🌍',level:57},{name:'Top4 - Poppy',emoji:'⚙️',level:58},{name:'Top4 - Aoki',emoji:'🦅',level:59},{name:'Top4 - Sinius',emoji:'🐉',level:60},{name:'Champion Sagaria',emoji:'⭐',level:62}
-  ]},
-];
 
 const TYPE_MAP = {
   normal:'normal',fire:'fire',water:'water',electric:'electric',grass:'grass',
@@ -1558,6 +1519,11 @@ let selectedPokemon = null;
 let editingTarget = null; // {pi, loc:'team'|'box', idx}  idx=null when adding new box mon
 let linkPickerSource = null; // {pi, loc, idx}
 let boxCollapsed = {}; // playerId -> bool (not persisted, UI-only)
+
+// Wenn der Tracker über den lokalen Mini-Server läuft (http://localhost:PORT/index.html
+// statt einer lokalen Datei), wird der Stand zusätzlich zu localStorage per REST
+// synchronisiert, damit das OBS-Overlay (obs.html) live mitlesen kann.
+const SERVER_SYNC = /^https?:$/.test(location.protocol);
 
 // ============================================================
 //  IDS & SOULLINK HELPERS
@@ -1615,8 +1581,27 @@ function linkBadge(poke) {
 //  INIT
 // ============================================================
 
-function init() {
+async function init() {
   loadData();
+
+  // Falls über den lokalen Server aufgerufen: aktuellen Stand vom Server holen
+  // (relevant wenn z.B. in einem anderen Tab/Fenster zuletzt gespeichert wurde)
+  if (SERVER_SYNC) {
+    try {
+      const res = await fetch('/api/state', { cache: 'no-store' });
+      if (res.ok) {
+        const serverState = await res.json();
+        if (serverState && Array.isArray(serverState.players) && serverState.players.length) {
+          state = { ...state, ...serverState };
+          state.players.forEach(p => {
+            if (!Array.isArray(p.box)) p.box = [];
+            if (!Array.isArray(p.deadBox)) p.deadBox = [];
+          });
+        }
+      }
+    } catch (e) { /* Server nicht erreichbar - lokaler Stand wird genutzt */ }
+  }
+
   renderGameSelect();
   renderPlayerCountSelect();
   renderGyms();
@@ -1697,12 +1682,25 @@ function createPlayer(num) {
 //  GYMS
 // ============================================================
 
+const TROPHY_SVG = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M7 3h10v4a5 5 0 0 1-5 5 5 5 0 0 1-5-5V3z" fill="#ffd166"/>
+  <path d="M7 4H3v2a4 4 0 0 0 4 4" stroke="#ffd166" stroke-width="1.5" fill="none"/>
+  <path d="M17 4h4v2a4 4 0 0 1-4 4" stroke="#ffd166" stroke-width="1.5" fill="none"/>
+  <rect x="10" y="12" width="4" height="4" fill="#ffd166"/>
+  <path d="M6 21h12v-2a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2z" fill="#ffd166"/>
+</svg>`;
+
+function badgeIconHtml(gym) {
+  if (!gym.badge) return TROPHY_SVG;
+  return `<img src="${gym.badge}" alt="${gym.name}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{innerHTML:TROPHY_SVG}).firstElementChild)" />`;
+}
+
 function renderGyms() {
   const grid = document.getElementById('gymsGrid');
   const game = getGame();
   grid.innerHTML = game.gyms.map((gym, i) => `
     <div class="gym-badge ${state.completedGyms.includes(i)?'completed':''}" onclick="toggleGym(${i})">
-      <span class="badge-icon">${gym.emoji}</span>
+      <span class="badge-icon">${badgeIconHtml(gym)}</span>
       <span class="badge-name">${gym.name}</span>
       <span class="badge-level">Lv ${gym.level}</span>
     </div>
@@ -2382,6 +2380,14 @@ function saveData() {
   try {
     localStorage.setItem('nuzlocke_v2', JSON.stringify(state));
   } catch(e) {}
+
+  if (SERVER_SYNC) {
+    fetch('/api/state', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(state)
+    }).catch(() => { /* Server nicht erreichbar, egal - localStorage hat den Stand */ });
+  }
 }
 
 function loadData() {
@@ -2416,6 +2422,7 @@ function resetAll() {
   renderPlayers();
   renderLinks();
   updateTotalDeaths();
+  saveData();
   showToast('🔄 Alles zurückgesetzt!');
 }
 
